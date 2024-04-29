@@ -1,36 +1,35 @@
-const { Pool } = require('pg');
+const {Pool} = require("pg");
 const nodemailer = require("nodemailer");
 
 //Conexión a la base de datos------------------------------------------------------>
 
 const pool = new Pool({
-    host: 'localhost',
-    user: 'postgres',
-    password: '1234',
-    database: 'gimnasio',
-    port: 5432
+  host: "localhost",
+  user: "postgres",
+  password: "1234",
+  database: "gimnasio",
+  port: 5432,
 });
 
 //Definición de los métodos--------------------------------------------------------->
 
 const sendEmailWelcome = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: '¡Bienvenido a la familia!',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "¡Bienvenido a la familia!",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -71,7 +70,7 @@ const sendEmailWelcome = async (req, res) => {
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                             <tr>
                                 <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                                    <p style="margin: 0;">El gimnasio Reto 21 te da la bienvenida a nuestras instalaciones. con notros podras lograr tus objetivos</p>
+                                    <p style="margin: 0;">El gimnasio Reto 21 te da la bienvenida a nuestras instalaciones. con nosotros podras lograr tus objetivos</p>
                                 </td>
                             </tr>
                             <tr>
@@ -137,41 +136,35 @@ const sendEmailWelcome = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
+  });
+};
 
 const sendEmailChangePassword = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: '¡La contraseña se actualizó con éxito!.',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "¡La contraseña se actualizó con éxito!.",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -263,44 +256,35 @@ const sendEmailChangePassword = async (req, res) => {
             </table>
         </body>
         
-        </html>`
+        </html>`,
+  };
 
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
+  });
+};
 
 const sendEmailAssingPlanNutrition = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: '¡Se te asigno un plan de alimentación!',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "¡Se te asigno un plan de alimentación!",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -406,43 +390,35 @@ const sendEmailAssingPlanNutrition = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
+  });
+};
 
 const sendEmailRegisteredAssessment = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: 'Se actualizó el registro de las valoraciones.',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "Se actualizó el registro de las valoraciones.",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -548,42 +524,35 @@ const sendEmailRegisteredAssessment = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
+  });
+};
 
 const sendEmailUpdateAssessment = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: 'Se actualizó una valoración ya existente',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "Se actualizó una valoración ya existente",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -624,7 +593,7 @@ const sendEmailUpdateAssessment = async (req, res) => {
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                             <tr>
                                 <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                                    <p style="margin: 0;">Tenemos el gusto de informarte que se realizó la actualización de una de tus valoración.</p>
+                                    <p style="margin: 0;">Tenemos el gusto de informarte que se realizó la actualización de una de tus valoraciones.</p>
                                 </td>
                             </tr>
                             <tr>
@@ -689,45 +658,35 @@ const sendEmailUpdateAssessment = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
-
-
+  });
+};
 
 const sendEmailAssingPlanTraining = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: '¡Se te asignó un plan de entrenamiento!',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "¡Se te asignó un plan de entrenamiento!",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -833,45 +792,35 @@ const sendEmailAssingPlanTraining = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
-
-
+  });
+};
 
 const sendEmailCodeUpdatePassword = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo, codigo} = req.body;
 
-    const { correo, codigo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: 'Código para actualizar la contraseña.',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "Código para actualizar la contraseña.",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -977,45 +926,35 @@ const sendEmailCodeUpdatePassword = async (req, res) => {
             </table>
         </body>
         
-        </html>`
+        </html>`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
-
-
+  });
+};
 
 const sendEmailActivatedAcount = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: '¡Cuenta Activada con Éxito',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "¡Cuenta Activada con Éxito",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -1120,51 +1059,41 @@ const sendEmailActivatedAcount = async (req, res) => {
             </table>
         </body>
         
-        </html>`
+        </html>`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
-
-
-
-
-
+  });
+};
 
 const sendEmailAssingQuote = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo, id_reservacion, hora, fecha} = req.body;
+  const id_hora = hora;
+  const response = await pool.query(
+    "select horas from reservacion_hora where id_hora = $1",
+    [id_hora]
+  );
+  const horas = response.horas;
 
-    const { correo,id_reservacion,hora,fecha } = req.body;
-    const id_hora = hora;
-    const response = await pool.query('select horas from reservacion_hora where id_hora = $1',[id_hora]);
-    const horas = response.horas;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: '¡Cita de Valoración Agendada!',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "¡Cita de Valoración Agendada!",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -1266,50 +1195,42 @@ const sendEmailAssingQuote = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
-
-
-
+  });
+};
 
 const sendEmailUpdateQuote = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo, id_reservacion, hora, fecha} = req.body;
 
-    const { correo,id_reservacion,hora,fecha } = req.body;
+  const id_hora = hora;
+  const response = await pool.query(
+    "select horas from reservacion_hora where id_hora = $1",
+    [id_hora]
+  );
+  const horas = response.horas;
 
-    const id_hora = hora;
-    const response = await pool.query('select horas from reservacion_hora where id_hora = $1',[id_hora]);
-    const horas = response.horas;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: '¡Actualización en su cita de valoración!',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "¡Actualización en su cita de valoración!",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -1366,7 +1287,13 @@ const sendEmailUpdateQuote = async (req, res) => {
                             </tr> <!-- COPY -->
                             <tr>
                                 <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                                    <p style="margin: 0;"> Tú cita de valoración quedo agendada el día  <a style="color: #d8ca02;"> ${fecha.substring(0,10)} </a> a la hora <a style="color: #d8ca02;"> ${horas.substring(0,5)}. </a> Le invitamos a comunicarse con un administrador o entrenador para recibir más información.  </p>
+                                    <p style="margin: 0;"> Tú cita de valoración quedo agendada el día  <a style="color: #d8ca02;"> ${fecha.substring(
+                                      0,
+                                      10
+                                    )} </a> a la hora <a style="color: #d8ca02;"> ${horas.substring(
+      0,
+      5
+    )}. </a> Le invitamos a comunicarse con un administrador o entrenador para recibir más información.  </p>
                                 </td>
                             </tr> <!-- COPY -->
                             <tr>
@@ -1411,46 +1338,35 @@ const sendEmailUpdateQuote = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
-
-
-
+  });
+};
 
 const sendEmailUpdatePlans = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: 'Se actualizó su plan contratado.',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "Se actualizó su plan contratado.",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -1556,45 +1472,35 @@ const sendEmailUpdatePlans = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
-
-
+  });
+};
 
 const sendEmailUpdateTypeAssessment = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: '¡Se actualizó tu tipo de valoración!',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "¡Se actualizó tu tipo de valoración!",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -1700,45 +1606,35 @@ const sendEmailUpdateTypeAssessment = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
-
-
+  });
+};
 
 const sendEmailUpdateInfoUser = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: 'Se actualizó la información de su perfil de usuario.',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "Se actualizó la información de su perfil de usuario.",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -1844,50 +1740,42 @@ const sendEmailUpdateInfoUser = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
+  });
+};
 
-    transporter.sendMail(mailOptions, (error,info) => {
+const sendEmailUpdateTimePago = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
+  const {correo} = req.body;
+  const response = await pool.query(
+    "SELECT titulo_suscripcion, fecha_de_inicio, fecha_de_fin FROM usuarios, suscripcion, pago where id_suscripcion_pago=id_suscripcion and documento_usuarios_pago=documento and correo= $1",
+    [correo]
+  );
+  const titulo_suscripcion = response.titulo_suscripcion;
+  const fecha_de_inicio = response.fecha_de_inicio;
+  const fecha_de_fin = response.fecha_de_fin;
 
-    });
-
-}
-
-
-
-
-
-
-
-const sendEmailUpdateTimePago= async (req, res) => {
-
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
-
-    const { correo } = req.body;
-    const response = await pool.query('SELECT titulo_suscripcion, fecha_de_inicio, fecha_de_fin FROM usuarios, suscripcion, pago where id_suscripcion_pago=id_suscripcion and documento_usuarios_pago=documento and correo= $1',[correo]);
-    const titulo_suscripcion = response.titulo_suscripcion;
-    const fecha_de_inicio = response.fecha_de_inicio;
-    const fecha_de_fin = response.fecha_de_fin;
-
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: 'Se realizó el pago de la suscripción.',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "Se realizó el pago de la suscripción.",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -1993,48 +1881,35 @@ const sendEmailUpdateTimePago= async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
-
-
-
-
-
+  });
+};
 
 const sendEmailUpdateStateActived = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: '¡Activamos tú cuenta!',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "¡Activamos tú cuenta!",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -2140,44 +2015,35 @@ const sendEmailUpdateStateActived = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
-
+  });
+};
 
 const sendEmailUpdateStateBlocked = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {correo} = req.body;
 
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: 'Tú cuenta ha sido bloqueada.',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "Tú cuenta ha sido bloqueada.",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -2281,49 +2147,35 @@ const sendEmailUpdateStateBlocked = async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
+  });
+};
 
-    transporter.sendMail(mailOptions, (error,info) => {
+const sendEmailResetPassword = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
+  const {correo} = req.body;
 
-    });
-
-}
-
-
-
-
-
-
-
-
-
-
-
-const sendEmailResetPassword= async (req, res) => {
-
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
-
-    const { correo } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: correo,
-        subject: '¡Su contraseña se actualizó con éxito!',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "¡Su contraseña se actualizó con éxito!",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -2429,58 +2281,35 @@ const sendEmailResetPassword= async (req, res) => {
         </body>
         
         </html>
-        `
+        `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
+  });
+};
 
-    transporter.sendMail(mailOptions, (error,info) => {
+const sendEmailContact = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
+  const {nombre, email, numero_telefono, mensaje} = req.body;
 
-    });
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const sendEmailContact= async (req, res) => {
-
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
-
-    const { nombre, email, numero_telefono, mensaje } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: 'reto21.silvania@gmail.com',
-        subject: 'Solicitud de contacto.',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: "reto21.silvania@gmail.com",
+    subject: "Solicitud de contacto.",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -2554,43 +2383,35 @@ const sendEmailContact= async (req, res) => {
             </table>
         </body>
         
-        </html>`
+        </html>`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
-
-
-
-
+  });
+};
 
 const sendEmailBuzon = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        auth: {
-            user: 'reto21.team@gmail.com',
-            pass: 'vmezkdfukfnvzuzk'
-        }
-    });
+  const {buzon} = req.body;
 
-    const { buzon } = req.body;
-
-    var mailOptions = {
-        from: 'Reto 21',
-        to: 'reto21.silvania@gmail.com',
-        subject: 'Buzón de sugerencia',
-        html: `<!DOCTYPE html>
+  var mailOptions = {
+    from: "Reto 21",
+    to: "reto21.silvania@gmail.com",
+    subject: "Buzón de sugerencia",
+    html: `<!DOCTYPE html>
         <html>
         
         <head>
@@ -2666,53 +2487,39 @@ const sendEmailBuzon = async (req, res) => {
             </table>
         </body>
         
-        </html>`
+        </html>`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
     }
-
-    transporter.sendMail(mailOptions, (error,info) => {
-
-        if(error){
-            res.status(500).send(error.message);
-        }else{
-            res.status(200).json('Correo enviado');
-        }
-
-    });
-
-}
+  });
+};
 
 //Exportar los métodos-------------------------------------------------------------->
 
 module.exports = {
+  sendEmailWelcome,
+  sendEmailChangePassword,
+  sendEmailAssingPlanNutrition,
+  sendEmailRegisteredAssessment,
+  sendEmailUpdateAssessment,
+  sendEmailAssingPlanTraining,
+  sendEmailCodeUpdatePassword,
+  sendEmailActivatedAcount,
+  sendEmailAssingQuote,
+  sendEmailUpdateQuote,
+  sendEmailUpdatePlans,
+  sendEmailUpdateTypeAssessment,
+  sendEmailUpdateInfoUser,
+  sendEmailUpdateTimePago,
+  sendEmailUpdateStateActived,
+  sendEmailUpdateStateBlocked,
+  sendEmailResetPassword,
 
-    sendEmailWelcome,
-    sendEmailChangePassword,
-    sendEmailAssingPlanNutrition,
-    sendEmailRegisteredAssessment,
-    sendEmailUpdateAssessment,
-    sendEmailAssingPlanTraining,
-    sendEmailCodeUpdatePassword,
-    sendEmailActivatedAcount,
-    sendEmailAssingQuote,
-    sendEmailUpdateQuote,
-    sendEmailUpdatePlans,
-    sendEmailUpdateTypeAssessment,
-    sendEmailUpdateInfoUser,
-    sendEmailUpdateTimePago,
-    sendEmailUpdateStateActived,
-    sendEmailUpdateStateBlocked,
-    sendEmailResetPassword,
-
-
-
-
-
-
-
-
-
-
-    sendEmailContact,
-    sendEmailBuzon
-
-}
+  sendEmailContact,
+  sendEmailBuzon,
+};

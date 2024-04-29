@@ -44,7 +44,7 @@ const selectNewUsers = async (req, res) => {
 const selectOldUsers = async (req, res) => {
   try {
     const response = await pool.query(
-      "select documento,nombre_tipo_nutri, nombres, primer_apellido, segundo_apellido from usuarios,plan_nutricional, plan_nutricional_usuarios, tipo_nutricional, rol where plan_nutricional_usuarios.id_plan_nutri=id_plan and documento_plan=documento and tipo= tipo_nutricional.id_plan_nutri and rol=id_rol and rol=5"
+      "select documento,nombre_tipo_nutri,id_plan, nombres, primer_apellido, segundo_apellido from usuarios,plan_nutricional, plan_nutricional_usuarios, tipo_nutricional, rol where plan_nutricional_usuarios.id_plan_nutri=id_plan and documento_plan=documento and tipo= tipo_nutricional.id_plan_nutri and rol=id_rol and rol=5"
     );
 
     if (response.error) {
