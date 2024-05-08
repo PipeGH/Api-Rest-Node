@@ -111,7 +111,9 @@ const createUsers = async (req, res) => {
     );
 
     if (response.error) {
-      res.status(401).json("El documento que ingreso ya se cuenta registrado");
+      res
+        .status(401)
+        .json("El documento que ingreso ya se encuentra registrado");
     } else {
       const respuesta = await pool.query(
         "insert into telefono(documento_usuario, numero_telefono)values($1,$2)",
