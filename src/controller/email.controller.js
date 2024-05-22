@@ -401,7 +401,139 @@ const sendEmailAssingPlanNutrition = async (req, res) => {
     }
   });
 };
+const sendEmailDaysRemainingPlan = async (req, res) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: "reto21.team@gmail.com",
+      pass: "vmezkdfukfnvzuzk",
+    },
+  });
 
+  const {correo} = req.body;
+
+  var mailOptions = {
+    from: "Reto 21",
+    to: correo,
+    subject: "¡Oye tu plan esta por expirar!",
+    html: `<!DOCTYPE html>
+          <html>
+          
+          <head>
+              <title></title>
+              <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+          </head>
+          
+          <body style="background-color: #000000; margin: 0 !important; padding: 0 !important;">
+              <!-- HIDDEN PREHEADER TEXT -->
+              <div style="display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: 'Lato', Helvetica, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;"> We're thrilled to have you here! Get ready to dive into your new account.
+              </div>
+              <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                  <!-- LOGO -->
+                  <tr>
+                      <td bgcolor="ffff00" align="center">
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                              <tr>
+                                  <td align="center" valign="top" style="padding: 40px 10px 40px 10px;"> </td>
+                              </tr>
+                          </table>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td bgcolor="ffff00" align="center" style="padding: 0px 10px 0px 10px;">
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                              <tr>
+                                  <td bgcolor="#ffffff" align="center" valign="top" style="padding: 40px 20px 20px 20px; border-radius: 4px 4px 0px 0px; color: #111111; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; letter-spacing: 4px; line-height: 48px;">
+                                      <h1 style="font-size: 48px; font-weight: 400; margin: 2;">Información!</h1> <img src="https://storage.googleapis.com/studio-design-asset-files/projects/7kadNre6O3/s-1279x1280_v-fms_webp_196037a5-07b0-4203-9085-4acc8655bf09.png" width="125" height="120" style="display: block; border: 0px;  border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none;" />
+                                  </td>
+                              </tr>
+                          </table>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td bgcolor="#0000" align="center" style="padding: 0px 10px 0px 10px;">
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                              <tr>
+                                  <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                                      <p style="margin: 0;">Tenemos el gusto de informarte que a tu plan de entrenamiento le quedan 5 dias, recuerda renovarlo en los proximos dias para que sigas distrutando de nuestros servicios.</p>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td bgcolor="#ffffff" align="left">
+                                      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                          <tr>
+                                              <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
+                                                  <table border="0" cellspacing="0" cellpadding="0">
+                                                      <tr>
+                                                          <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para ver tú plan</a></td>
+                                                      </tr>
+                                                  </table>
+                                              </td>
+                                          </tr>
+                                      </table>
+                                  </td>
+                              </tr> <!-- COPY -->
+                              <tr>
+                                  <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 0px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                                      <p style="margin: 0;"><a style="color: #d8ca02;">Si tienes dudas te invitamos a comunicarte con un administrador.</a></p>
+                                  </td>
+                              </tr> <!-- COPY -->
+                              <tr>
+                                  <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                                      <p style="margin: 0;"></p>
+                                  </td>
+                              </tr>
+                              <tr>
+                                  <td bgcolor="#ffffff" align="left" style="padding: 0px 30px 20px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                                      <p style="margin: 0;">Este Correo es netamente informativo, por favor<a style="color: #ff0505; font-weight: 700;"> no responder</a>.
+                              </tr>
+                          </table>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td bgcolor="#0000" align="center" style="padding: 30px 10px 0px 10px;">
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                              <tr>
+                                  <td bgcolor="#ffffff" align="center" style="padding: 30px 30px 30px 30px; border-radius: 4px 4px 4px 4px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
+                                      <h2 style="font-size: 20px; font-weight: 400; color: #111111; margin: 0;">Para mas informacion</h2>
+                                      <p style="margin: 0;"><a  style="color: #e7d000;">Ubicacion Calle. 9 #4-101 a 4-1, Silvania, Cundinamarca <br>
+                                          Call +57 311-821-7361 <br>
+                                          reto21.silvania@gmail.com
+                                         </a></p>
+                                  </td>
+                              </tr>
+                          </table>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td bgcolor="#0000" align="center" style="padding: 0px 10px 0px 10px;">
+                          <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+                              <tr>
+                                  <td bgcolor="#0000" align="left" style="padding: 0px 30px 30px 30px; color: #ebebeb; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 400; line-height: 18px;"> <br>
+                                      <p style="margin: 0;">Este Correo es netamente informativo, por favor<a style="color: #ff0505; font-weight: 700;"> no responder</a>.</p>
+                                  </td>
+                              </tr>
+                          </table>
+                      </td>
+                  </tr>
+              </table>
+          </body>
+          
+          </html>
+          `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(200).json("Correo enviado");
+    }
+  });
+};
 const sendEmailRegisteredAssessment = async (req, res) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -2505,6 +2637,7 @@ module.exports = {
   sendEmailWelcome,
   sendEmailChangePassword,
   sendEmailAssingPlanNutrition,
+  sendEmailDaysRemainingPlan,
   sendEmailRegisteredAssessment,
   sendEmailUpdateAssessment,
   sendEmailAssingPlanTraining,

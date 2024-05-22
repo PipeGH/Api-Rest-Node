@@ -128,9 +128,9 @@ const createUsers = async (req, res) => {
       }
     }
   } catch (error) {
-    const ner = error.length;
+    const documentoExist = error.length;
 
-    if (ner == 207) {
+    if (documentoExist == 207) {
       res
         .status(207)
         .json(
@@ -422,6 +422,7 @@ const selectPasswordProfile = async (req, res) => {
 
     if (response.error) {
       res.status(500).json(response.error);
+      return;
     } else {
       if (response.rowCount == 0) {
         res.status(200).json("Documento incorrecto");
@@ -430,6 +431,8 @@ const selectPasswordProfile = async (req, res) => {
         const password_decryp = cryptr.decrypt(password_act);
         if (password_decryp == password) {
           res.status(200).json("Documento y contraseña correctos");
+        } else {
+          res.status(200).json("Contraseña incorrecta");
         }
       }
     }
@@ -654,17 +657,65 @@ const selectDataUserDateInitAndFinish = async (req, res) => {
 //Metodos del cliente------------------------------------------
 
 //Métodos de la recepcion-----------------------------------------------------------------
-
 const selectAllClient = async (req, res) => {
   try {
-    const response = await pool.query(
-      "SELECT documento, nombres, primer_apellido, segundo_apellido,id_suscripcion,titulo_suscripcion, tipo_de_documento, nombre_cuenta,nombre_tipo_genero FROM usuarios, suscripcion, pago,estado_cuenta, genero where estado=id_cuenta and genero=id_genero and id_suscripcion_pago=id_suscripcion and documento_usuarios_pago=documento and rol=5"
-    );
+    const response = await pool.query(`
+      SELECT 
+        u.documento, 
+        u.nombres, 
+        u.primer_apellido, 
+        u.segundo_apellido, 
+        u.correo, 
+        s.id_suscripcion,
+        s.titulo_suscripcion, 
+        u.tipo_de_documento, 
+        ec.nombre_cuenta,
+        g.nombre_tipo_genero,
+        p.fecha_de_inicio,
+        p.fecha_de_fin,
+        CASE
+          WHEN p.fecha_de_fin IS NULL THEN 0
+          ELSE GREATEST(0, DATE_PART('day', p.fecha_de_fin::timestamp - CURRENT_DATE::timestamp))
+        END AS days_remaining,
+        CASE
+          WHEN (p.fecha_de_fin IS NOT NULL AND p.fecha_de_fin::date = CURRENT_DATE::date) THEN 2
+          WHEN (GREATEST(0, DATE_PART('day', p.fecha_de_fin::timestamp - CURRENT_DATE::timestamp)) = 0) THEN 2
+          ELSE u.estado
+        END AS estado
+      FROM 
+        usuarios u
+      JOIN 
+        pago p ON u.documento = p.documento_usuarios_pago
+      JOIN 
+        suscripcion s ON p.id_suscripcion_pago = s.id_suscripcion
+      JOIN 
+        estado_cuenta ec ON u.estado = ec.id_cuenta
+      JOIN 
+        genero g ON u.genero = g.id_genero
+      WHERE 
+        u.rol = 5
+      ORDER BY 
+        days_remaining ASC;
+    `);
 
     if (response.error) {
       res.status(401).json(response.error);
     } else {
-      res.status(200).json(response.rows);
+      // Actualizar el estado del usuario en la base de datos si days_remaining es 0
+      const updatedRows = response.rows.map((row) => {
+        if (row.days_remaining === 0) {
+          // Actualizar el estado del usuario en la base de datos a inactivo (2)
+          pool.query(`UPDATE usuarios SET estado = 2 WHERE documento = $1`, [
+            row.documento,
+          ]);
+          // Actualizar el estado en el objeto de respuesta
+          return {...row, estado: 2};
+        } else {
+          return row;
+        }
+      });
+
+      res.status(200).json(updatedRows);
     }
   } catch (error) {
     res.status(401).json(error.details);
@@ -753,6 +804,7 @@ const createNewUser = async (req, res) => {
       fecha_de_fin,
       id_valoracion_tipo,
     } = req.body;
+
     const rol = 5;
     const password = cryptr.encrypt(documento);
     const response = await pool.query(
@@ -774,7 +826,9 @@ const createNewUser = async (req, res) => {
     );
 
     if (response.error) {
-      res.status(401).json(response.error);
+      return res
+        .status(401)
+        .json("Imposible registrar el usuario, intente nuevamente");
     } else {
       const documento_usuario = documento;
       const response = await pool.query(
@@ -826,7 +880,13 @@ const createNewUser = async (req, res) => {
       }
     }
   } catch (error) {
-    res.status(401).json(error.details);
+    const docExistent = error.length;
+
+    if (docExistent == 207) {
+      res
+        .status(207)
+        .json("El documento que ingreso ya se encuentra registrado");
+    }
   }
 };
 
@@ -1004,7 +1064,7 @@ const searchDateUserToResetPassword = async (req, res) => {
   }
 };
 
-/*const validateExistensPassword = async (req, res) => {
+const validateExistensPassword = async (req, res) => {
   try {
     const {documento, password_new} = req.body;
     const password = password_new;
@@ -1033,7 +1093,7 @@ const searchDateUserToResetPassword = async (req, res) => {
   } catch (error) {
     res.status(500).json(error.message);
   }
-};*/
+};
 
 const resetPassword = async (req, res) => {
   try {
@@ -1141,7 +1201,7 @@ module.exports = {
   updateProfile,
   selectPasswordProfile,
   updatePassword,
-
+  validateExistensPassword,
   selectUsersPlan,
 
   selectOldUsersFirstPart,

@@ -25,6 +25,7 @@ const {
   selectPasswordProfile,
   updatePassword,
   selectUsersPlan,
+  selectGetPlans,
   selectOldUsersFirstPart,
   selectNewUsers,
   selectOldUsersSecondtPart,
