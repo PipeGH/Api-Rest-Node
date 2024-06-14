@@ -26,7 +26,27 @@ const selectUsers = async (req, res) => {
   try {
     const {documento} = req.body;
     const response = await pool.query(
-      "select documento, nombres, primer_apellido, segundo_apellido,nombre_rol,nombre_cuenta, nombre_tipo_genero from usuarios,rol, genero,estado_cuenta where genero = id_genero and estado=id_cuenta and rol=id_rol and NOT documento=$1",
+      `SELECT 
+    documento, 
+    nombres, 
+    primer_apellido, 
+    segundo_apellido, 
+    nombre_rol, 
+    nombre_cuenta, 
+    nombre_tipo_genero 
+      FROM 
+          usuarios
+      JOIN 
+          rol ON rol.id_rol = usuarios.rol
+      JOIN 
+          genero ON genero.id_genero = usuarios.genero
+      JOIN 
+          estado_cuenta ON estado_cuenta.id_cuenta = usuarios.estado
+      WHERE 
+          documento <> $1
+      ORDER BY 
+    primer_apellido ASC, 
+    segundo_apellido ASC;`,
       [documento]
     );
     res.json(response.rows);
@@ -75,7 +95,6 @@ const selectGender = async (req, res) => {
     res.status(401).json("Error en el servidor, intente más tarde");
   }
 };
-
 const createUsers = async (req, res) => {
   try {
     const {
@@ -93,8 +112,20 @@ const createUsers = async (req, res) => {
     const estado = 1;
     const img = 1;
 
-    const response = await pool.query(
-      "insert into usuarios(documento,correo,password, nombres, primer_apellido, segundo_apellido,rol, tipo_de_documento,estado, genero, img) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
+    // Verificar si el documento ya existe
+    const existingUser = await pool.query(
+      "SELECT 1 FROM usuarios WHERE documento = $1",
+      [documento]
+    );
+
+    if (existingUser.rows.length > 0) {
+      return res
+        .status(400)
+        .json("El documento que ingresó ya se encuentra registrado");
+    }
+
+    await pool.query(
+      "INSERT INTO usuarios(documento, correo, password, nombres, primer_apellido, segundo_apellido, rol, tipo_de_documento, estado, genero, img) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
       [
         documento,
         correo,
@@ -110,33 +141,15 @@ const createUsers = async (req, res) => {
       ]
     );
 
-    if (response.error) {
-      res
-        .status(401)
-        .json("El documento que ingreso ya se encuentra registrado");
-    } else {
-      const respuesta = await pool.query(
-        "insert into telefono(documento_usuario, numero_telefono)values($1,$2)",
-        [documento, telefono]
-      );
-      if (respuesta.error) {
-        res
-          .status(401)
-          .json("Imposible registrar el usuario, intente nuevamente");
-      } else {
-        res.json("Usuario registrado satisfactoriamente");
-      }
-    }
-  } catch (error) {
-    const documentoExist = error.length;
+    await pool.query(
+      "INSERT INTO telefono(documento_usuario, numero_telefono) VALUES ($1, $2)",
+      [documento, telefono]
+    );
 
-    if (documentoExist == 207) {
-      res
-        .status(207)
-        .json(
-          "El documento que ingreso ya se encuentra registrado, intente nuevamente"
-        );
-    }
+    res.json("Usuario registrado satisfactoriamente");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Error al registrar el usuario, intente nuevamente");
   }
 };
 
@@ -280,7 +293,19 @@ const selectDays = async (req, res) => {
 const selectClient = async (req, res) => {
   try {
     const response = await pool.query(
-      "select documento, nombres, primer_apellido,segundo_apellido, correo from usuarios where rol = 5"
+      `SELECT 
+    documento, 
+    nombres, 
+    primer_apellido, 
+    segundo_apellido, 
+    correo 
+    FROM 
+        usuarios 
+    WHERE 
+        rol = 5
+    ORDER BY 
+        primer_apellido ASC, 
+        segundo_apellido ASC;`
     );
 
     if (response.error) {
@@ -785,7 +810,6 @@ const selectTypeValoracion = async (req, res) => {
     res.status(401).json(error.details);
   }
 };
-
 const createNewUser = async (req, res) => {
   try {
     const {
@@ -807,8 +831,22 @@ const createNewUser = async (req, res) => {
 
     const rol = 5;
     const password = cryptr.encrypt(documento);
-    const response = await pool.query(
-      "insert into usuarios (documento, correo, password, nombres, primer_apellido, segundo_apellido, rol, tipo_de_documento,estado,genero,img,fecha_nacimiento) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",
+
+    // Verificar si el documento ya existe
+    const existingUser = await pool.query(
+      "SELECT 1 FROM usuarios WHERE documento = $1",
+      [documento]
+    );
+
+    if (existingUser.rows.length > 0) {
+      return res
+        .status(400)
+        .json("El documento que ingresó ya se encuentra registrado");
+    }
+
+    // Insertar en la tabla usuarios
+    await pool.query(
+      "INSERT INTO usuarios (documento, correo, password, nombres, primer_apellido, segundo_apellido, rol, tipo_de_documento, estado, genero, img, fecha_nacimiento) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)",
       [
         documento,
         correo,
@@ -825,67 +863,40 @@ const createNewUser = async (req, res) => {
       ]
     );
 
-    if (response.error) {
-      return res
-        .status(401)
-        .json("Imposible registrar el usuario, intente nuevamente");
-    } else {
-      const documento_usuario = documento;
-      const response = await pool.query(
-        "insert into telefono (documento_usuario,numero_telefono) values ($1,$2)",
-        [documento_usuario, numero_telefono]
-      );
+    // Insertar en la tabla telefono
+    await pool.query(
+      "INSERT INTO telefono (documento_usuario, numero_telefono) VALUES ($1, $2)",
+      [documento, numero_telefono]
+    );
 
-      if (response.error) {
-        res.status(401).json(response.error);
-      } else {
-        const documento_usuario_pago = documento;
-        const response = await pool.query(
-          "insert into pago (id_suscripcion_pago,documento_usuarios_pago, fecha_de_inicio, fecha_de_fin) values ($1,$2,current_date,$3)",
-          [id_suscripcion_pago, documento_usuario_pago, fecha_de_fin]
-        );
+    // Insertar en la tabla pago
+    await pool.query(
+      "INSERT INTO pago (id_suscripcion_pago, documento_usuarios_pago, fecha_de_inicio, fecha_de_fin) VALUES ($1, $2, current_date, $3)",
+      [id_suscripcion_pago, documento, fecha_de_fin]
+    );
 
-        if (response.error) {
-          res.status(401).json(response.error);
-        } else {
-          const documento_tipo = documento;
-          const response = await pool.query(
-            "insert into tipo_usuario (id_valoracion_tipo,documento_tipo) values ($1,$2)",
-            [id_valoracion_tipo, documento_tipo]
-          );
+    // Insertar en la tabla tipo_usuario
+    await pool.query(
+      "INSERT INTO tipo_usuario (id_valoracion_tipo, documento_tipo) VALUES ($1, $2)",
+      [id_valoracion_tipo, documento]
+    );
 
-          if (response.error) {
-            res.status(401).json(response.error);
-          } else {
-            res.status(200).json("Nuevo usuario creado con éxito");
-          }
+    // Insertar en la tabla plan_entre_usuario
+    await pool.query(
+      "INSERT INTO plan_entre_usuario (id_plan_entre, documento_entre) VALUES ($1, $2)",
+      [68642480, documento]
+    );
 
-          if (response.error) {
-            res.status(401).json(response.error);
-          } else {
-            const documento_entre = documento;
-            const id_plan_entre = 68642480;
-            const respuesta = await pool.query(
-              "insert into plan_entre_usuario (id_plan_entre,documento_entre) values ($1, $2)",
-              [id_plan_entre, documento_entre]
-            );
-
-            if (respuesta.error) {
-              res.status(401).json(respuesta.error);
-            } else {
-              res.status(200).json("Plan realizado con exito");
-            }
-          }
-        }
-      }
-    }
+    res.status(200).json("Nuevo usuario creado con éxito");
   } catch (error) {
-    const docExistent = error.length;
-
-    if (docExistent == 207) {
+    console.error("Error al registrar el usuario:", error);
+    if (error.constraint === "usuarios_documento_key") {
+      // Verificación de violación de restricción única para 'documento'
       res
-        .status(207)
-        .json("El documento que ingreso ya se encuentra registrado");
+        .status(400)
+        .json("El documento que ingresó ya se encuentra registrado");
+    } else {
+      res.status(500).json("Error al registrar el usuario, intente nuevamente");
     }
   }
 };
@@ -1228,12 +1239,9 @@ module.exports = {
   updateTypeAssessmentUser,
   updateDatePerfil,
   updateTimePago,
-
   searchEmailUser,
-
   searchDateUserToResetPassword,
   resetPassword,
-
   selecUserFromRol,
   searchOnePersonalInfo,
   searchOnePersonalTitle,
