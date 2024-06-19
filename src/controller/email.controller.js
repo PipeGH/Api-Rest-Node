@@ -80,7 +80,7 @@ const sendEmailWelcome = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para activar tu cuenta</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;" href="https://www.reto21.website/inicio">Inicia Sesion para activar tu cuenta</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -335,7 +335,7 @@ const sendEmailAssingPlanNutrition = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para ver tú plan</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;" href="https://www.reto21.website/inicio">Inicia Sesion para ver tú plan</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -458,7 +458,7 @@ const sendEmailDaysRemainingPlan = async (req, res) => {
                           <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                               <tr>
                                   <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                                      <p style="margin: 0;">Tenemos el gusto de informarte que a tu plan de entrenamiento le quedan 5 dias, recuerda renovarlo en los proximos dias para que sigas distrutando de nuestros servicios.</p>
+                                      <p style="margin: 0;">Tenemos el gusto de informarte que a tu plan de entrenamiento le quedan 5 dias, recuerda renovarlo en los proximos dias para que sigas distrutando de nuestros servicios.</p>   
                                   </td>
                               </tr>
                               <tr>
@@ -468,7 +468,7 @@ const sendEmailDaysRemainingPlan = async (req, res) => {
                                               <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                   <table border="0" cellspacing="0" cellpadding="0">
                                                       <tr>
-                                                          <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para ver tú plan</a></td>
+                                                          <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;" href="https://www.reto21.website/inicio">Inicia Sesion para ver tú plan</a></td>
                                                       </tr>
                                                   </table>
                                               </td>
@@ -601,7 +601,7 @@ const sendEmailRegisteredAssessment = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para ver tus resultados</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;" href="https://www.reto21.website/inicio">Inicia Sesion para ver tus resultados</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -735,7 +735,7 @@ const sendEmailUpdateAssessment = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para visualizar los cambios</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;" href="https://www.reto21.website/inicio">Inicia Sesion para visualizar los cambios</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -869,7 +869,7 @@ const sendEmailAssingPlanTraining = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para visualizar el plan de entrenamiento.</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;"  href="https://www.reto21.website/inicio">Inicia Sesion para visualizar el plan de entrenamiento.</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -1137,7 +1137,7 @@ const sendEmailActivatedAcount = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para activar tu cuenta</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;" href="https://www.reto21.website/inicio">Inicia Sesion para activar tu cuenta</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -1549,7 +1549,7 @@ const sendEmailUpdatePlans = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para visualizar la actualización</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">  href="https://www.reto21.website/inicio"Inicia Sesion para visualizar la actualización</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -1683,7 +1683,7 @@ const sendEmailUpdateTypeAssessment = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para revisar la actualización de la información.</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;" href="https://www.reto21.website/inicio">Inicia Sesion para revisar la actualización de la información.</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -1817,7 +1817,7 @@ const sendEmailUpdateInfoUser = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para verificar la actualización de información.</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a  style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;" href="https://www.reto21.website/inicio">Inicia Sesion para verificar la actualización de información.</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -1958,7 +1958,7 @@ const sendEmailUpdateTimePago = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para verificar la información</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;" href="https://www.reto21.website/inicio">Inicia Sesion para verificar la información</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -2092,7 +2092,7 @@ const sendEmailUpdateStateActived = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para verificar la información</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;" href="https://www.reto21.website/inicio">Inicia Sesion para verificar la información</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
@@ -2358,7 +2358,7 @@ const sendEmailResetPassword = async (req, res) => {
                                             <td bgcolor="#ffffff" align="center" style="padding: 20px 30px 60px 30px;">
                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                     <tr>
-                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;">Inicia Sesion para verificar la información</a></td>
+                                                        <td align="center" style="border-radius: 10px;" bgcolor="#ffff00"><a style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #000000; text-decoration: none; color: #000000; text-decoration: none; padding: 15px 25px; border-radius: 2px; border: 1px solid #ffee00; display: inline-block; border-radius: 10px;" href="https://www.reto21.website/inicio">Inicia Sesion para verificar la información</a></td>
                                                     </tr>
                                                 </table>
                                             </td>
