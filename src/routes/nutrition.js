@@ -47,7 +47,6 @@ router.post("/assingNutritionForOldUser", assingNutritionForOldUser);
 router.post("/selectNameNutrition", selectNameNutrition);
 router.post("/selectDateNutrition", selectDateNutrition);
 router.post("/updateNutrition", updateNutrition);
-
 router.post("/createPlanNutrition", createPlanNutrition);
 router.post("/createPlanNutritionPersonal", createPlanNutritionPersonal);
 router.get("/selectAlimento", selectAlimento);

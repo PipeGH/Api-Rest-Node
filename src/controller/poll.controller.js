@@ -168,30 +168,12 @@ const validateExercise = async (req, res) => {
     if (response.error) {
       res.status(401).json(response.error);
     } else {
-      if (genero == "Masculino") {
-        if (response.rowCount < 15) {
-          res.status(200).json("Faltan preguntas");
-        } else if (response.rowCount >= 16) {
-          if (response.rowCount == 16) {
-            res.status(200).json("Preguntas completas");
-          } else if (response.rowCount > 14 && response.rowCount < 16) {
-            res.status(200).json("Faltan preguntas");
-          } else if (response.rowCount >= 20) {
-            res.status(200).json("Preguntas completas");
-          }
-        }
-      } else if (genero == "Femenino") {
-        if (response.rowCount < 15) {
-          res.status(200).json("Faltan preguntas");
-        } else if (response.rowCount >= 16) {
-          if (response.rowCount == 16) {
-            res.status(200).json("Preguntas completas");
-          } else if (response.rowCount > 14 && response.rowCount < 16) {
-            res.status(200).json("Faltan preguntas");
-          } else if (response.rowCount >= 20) {
-            res.status(200).json("Preguntas completas");
-          }
-        }
+      if (response.rowCount < 1) {
+        res.status(200).json("Faltan preguntas");
+      } else if (response.rowCount == 1 || response.rowCount >= 5) {
+        res.status(200).json("Preguntas completas");
+      } else {
+        res.status(200).json("Faltan preguntas");
       }
     }
   } catch (error) {

@@ -579,13 +579,11 @@ module.exports = {
   selectOldUsers,
   selectNutritionGeneral,
   searchOnePlanNutrition,
-
   assingNutritionForNewUser,
   assingNutritionForOldUser,
   selectNameNutrition,
   selectDateNutrition,
   updateNutrition,
-
   createPlanNutrition,
   createPlanNutritionPersonal,
   selectAlimento,
