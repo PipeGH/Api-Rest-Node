@@ -142,11 +142,24 @@ const createMeasures = async (req, res) => {
 
 const createAssessmentBasic = async (req, res) => {
   try {
-    const {documento_valoracion, id_medidas_valoracion, imc, peso, estatura} =
-      req.body;
+    const {
+      documento_valoracion,
+      id_medidas_valoracion,
+      fecha_med,
+      imc,
+      peso,
+      estatura,
+    } = req.body;
     const response = await pool.query(
-      "insert into valoracion_basica (documento_valoracion,id_medidas_valoracion,fecha,imc,peso,estatura) values ($1,$2,current_date,$3,$4,$5)",
-      [documento_valoracion, id_medidas_valoracion, imc, peso, estatura]
+      "insert into valoracion_basica (documento_valoracion,id_medidas_valoracion,fecha,imc,peso,estatura) values ($1,$2,$3,$4,$5,$6)",
+      [
+        documento_valoracion,
+        id_medidas_valoracion,
+        fecha_med,
+        imc,
+        peso,
+        estatura,
+      ]
     );
 
     if (response.error) {
@@ -203,7 +216,23 @@ const createMeasuresBasic = async (req, res) => {
     res.status(401).json(error.details);
   }
 };
+const updateFechaAdvanced = async (req, res) => {
+  try {
+    const {id_medidas_valoracion, documento_valoracion, fecha_med} = req.body;
+    const response = await pool.query(
+      "update valoracion_avanzada set fecha=$1 where id_medidas_valoracion=$2 and documento_valoracion=$3",
+      [fecha_med, id_medidas_valoracion, documento_valoracion]
+    );
 
+    if (response.error) {
+      res.status(401).json(response.error);
+    } else {
+      res.status(200).json("Fecha actualizada con exito");
+    }
+  } catch (error) {
+    res.status(401).json(error.details);
+  }
+};
 const getDocument = async (req, res) => {
   try {
     const {id_medidas_valoracion} = req.body;
@@ -320,16 +349,17 @@ const createAssessmentAdvanced = async (req, res) => {
       id_generales_valoracion,
       id_masa_valoracion,
       id_grasa_valoracion,
-      fech,
+      fecha_m,
     } = req.body;
     const response = await pool.query(
-      "insert into valoracion_avanzada (documento_valoracion, id_medidas_valoracion, id_generales_valoracion, id_masa_valoracion, id_grasa_valoracion, fecha) values ($1,$2,$3,$4,$5,current_date)",
+      "insert into valoracion_avanzada (documento_valoracion, id_medidas_valoracion, id_generales_valoracion, id_masa_valoracion, id_grasa_valoracion, fecha) values ($1,$2,$3,$4,$5,$6)",
       [
         documento_valoracion,
         id_medidas_valoracion,
         id_generales_valoracion,
         id_masa_valoracion,
         id_grasa_valoracion,
+        fecha_m,
       ]
     );
 
@@ -608,10 +638,11 @@ const selectAssessmentBasic = async (req, res) => {
 
 const updateWeight = async (req, res) => {
   try {
-    const {id_medidas_valoracion, documento_valoracion, imc, peso} = req.body;
+    const {id_medidas_valoracion, documento_valoracion, imc, peso, fecha_med} =
+      req.body;
     const response = await pool.query(
-      "update valoracion_basica set peso = $1, imc=$2 where id_medidas_valoracion=$3 and documento_valoracion=$4",
-      [peso, imc, id_medidas_valoracion, documento_valoracion]
+      "update valoracion_basica set peso = $1, imc=$2, fecha=$3 where id_medidas_valoracion=$4 and documento_valoracion=$5",
+      [peso, imc, fecha_med, id_medidas_valoracion, documento_valoracion]
     );
 
     if (response.error) {
@@ -689,9 +720,10 @@ const updategeneralesTwo = async (req, res) => {
       k_caloria,
       peso,
       imc,
+      estatura,
     } = req.body;
     const response = await pool.query(
-      "update generales set agua_corporal = $1, masa_osea = $2, grasa_visceral = $3, bmr = $4, k_caloria = $5, peso=$6, imc=$7 where id_generales = $8",
+      "update generales set agua_corporal = $1, masa_osea = $2, grasa_visceral = $3, bmr = $4, k_caloria = $5, peso=$6, imc=$7, estatura=$8 where id_generales = $9",
       [
         agua_corporal,
         masa_osea,
@@ -700,6 +732,7 @@ const updategeneralesTwo = async (req, res) => {
         k_caloria,
         peso,
         imc,
+        estatura,
         id_generales,
       ]
     );
@@ -808,7 +841,7 @@ const createAssessmentBasicOld = async (req, res) => {
   try {
     const {documento_valoracion, id_medidas_valoracion, estatura} = req.body;
     const response = await pool.query(
-      "insert into valoracion_basica (documento_valoracion, id_medidas_valoracion,fecha, estatura) values ($1,$2,current_date,$3)",
+      "insert into valoracion_basica (documento_valoracion, id_medidas_valoracion, estatura) values ($1,$2,$3)",
       [documento_valoracion, id_medidas_valoracion, estatura]
     );
 
@@ -1341,6 +1374,7 @@ module.exports = {
   updateTipUsers,
   createMeasures,
   createAssessmentBasic,
+  updateFechaAdvanced,
   createMeasuresBasic,
   getDocument,
   cancellAssessmentBasic,
