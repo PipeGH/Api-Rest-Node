@@ -6,8 +6,6 @@ const router = express.Router();
 const {
   createPoll,
   selectGenderUserPoll,
-  validateHistory,
-  validateExams,
   validateExercise,
   updatePassword,
   updatePasswordPersonal,
@@ -17,7 +15,6 @@ const {
 
 router.post("/createPoll", createPoll);
 router.post("/selectGenderUserPoll", selectGenderUserPoll);
-
 router.post("/validateExercise", validateExercise);
 router.post("/updatePassword", updatePassword);
 

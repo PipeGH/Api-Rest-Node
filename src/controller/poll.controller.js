@@ -21,65 +21,72 @@ const cryptr = new Cryptr("WmZq4t7w9z$C&FJ@NcRfUjXn2r5u8x/");
 //Definición de los métodos--------------------------------------------------------->
 
 const createPoll = async (req, res) => {
+  console.log("Datos recibidos en createPoll:", req.body); // Log para verificar los datos recibidos
+
+  const client = await pool.connect();
+
   try {
-    const {id_pregu, documento_en, respuesta, observacion} = req.body;
+    await client.query("BEGIN");
 
-    const response = await pool.query(
-      "select * from encuesta where id_pregu = $1 and documento_en = $2",
-      [id_pregu, documento_en]
-    );
+    const responses = req.body;
 
-    if (response.rowCount == 0) {
-      if (observacion == "") {
-        const response = await pool.query(
-          "insert into encuesta (id_pregu, documento_en, respuesta) values ($1,$2,$3)",
-          [id_pregu, documento_en, respuesta]
-        );
+    for (const response of responses) {
+      const {id_pregu, documento_en, respuesta} = response;
 
-        if (response.error) {
-          res.status(401).json(response.error);
-        } else {
-          res.status(200).json("Respuesta registrada con exito");
-        }
-      } else {
-        const response = await pool.query(
-          "insert into encuesta (id_pregu, documento_en, respuesta, observacion) values ($1,$2,$3,$4)",
-          [id_pregu, documento_en, respuesta, observacion]
-        );
-
-        if (response.error) {
-          res.status(401).json(response.error);
-        } else {
-          res.status(200).json("Respuesta registrada con exito");
-        }
+      if (!id_pregu || !documento_en || !respuesta) {
+        console.log("Datos incompletos:", response);
+        await client.query("ROLLBACK");
+        return res.status(400).json({error: "Datos incompletos"});
       }
-    } else if (response.rowCount >= 1) {
-      if (observacion == "") {
-        const response = await pool.query(
-          "update encuesta set respuesta = $1 where id_pregu = $2 and documento_en = $3",
+
+      const existingResponse = await client.query(
+        "SELECT * FROM encuesta WHERE id_pregu = $1 AND documento_en = $2",
+        [id_pregu, documento_en]
+      );
+
+      if (existingResponse.rowCount >= 1) {
+        console.log("Actualizando respuesta existente:", {
+          id_pregu,
+          documento_en,
+          respuesta,
+        });
+        const updateResponse = await client.query(
+          "UPDATE encuesta SET respuesta = $1 WHERE id_pregu = $2 AND documento_en = $3",
           [respuesta, id_pregu, documento_en]
         );
 
-        if (response.error) {
-          res.status(401).json(response.error);
-        } else {
-          res.status(200).json("Respuesta actualizada con exito");
+        if (updateResponse.error) {
+          console.log("Error al actualizar:", updateResponse.error);
+          await client.query("ROLLBACK");
+          return res.status(500).json(updateResponse.error);
         }
       } else {
-        const response = await pool.query(
-          "update encuesta set respuesta = $1, observacion = $2 where id_pregu = $3 and documento_en = $4",
-          [respuesta, observacion, id_pregu, documento_en]
+        console.log("Insertando nueva respuesta:", {
+          id_pregu,
+          documento_en,
+          respuesta,
+        });
+        const insertResponse = await client.query(
+          "INSERT INTO encuesta (id_pregu, documento_en, respuesta) VALUES ($1, $2, $3)",
+          [id_pregu, documento_en, respuesta]
         );
 
-        if (response.error) {
-          res.status(401).json(response.error);
-        } else {
-          res.status(200).json("Respuesta actualizada con exito");
+        if (insertResponse.error) {
+          console.log("Error al insertar:", insertResponse.error);
+          await client.query("ROLLBACK");
+          return res.status(500).json(insertResponse.error);
         }
       }
     }
+
+    await client.query("COMMIT");
+    res.status(200).json("Respuestas registradas con éxito");
   } catch (error) {
-    res.status(401).json(error.details);
+    console.log("Error en el catch:", error);
+    await client.query("ROLLBACK");
+    res.status(500).json({error: error.message});
+  } finally {
+    client.release();
   }
 };
 
@@ -101,83 +108,32 @@ const selectGenderUserPoll = async (req, res) => {
   }
 };
 
-const validateHistory = async (req, res) => {
-  try {
-    const {documento_en, genero} = req.body;
-    const response = await pool.query(
-      "select * from encuesta where documento_en = $1",
-      [documento_en]
-    );
-
-    if (response.error) {
-      res.status(401).json(response.error);
-    } else {
-      if (response.rowCount < 6) {
-        res.json("Faltan preguntas");
-      } else if (response.rowCount >= 6) {
-        if (genero == "Masculino") {
-          res.json("Completo");
-        } else if (genero == "Femenino") {
-          res.json("Completo");
-        }
-      }
-    }
-  } catch (error) {
-    res.status(401).json(error.details);
-  }
-};
-
-const validateExams = async (req, res) => {
-  try {
-    const {documento_en, genero} = req.body;
-    const response = await pool.query(
-      "select * from encuesta where documento_en = $1",
-      [documento_en]
-    );
-
-    if (response.error) {
-      res.status(401).json(response.error);
-    } else {
-      if (genero == "Masculino") {
-        if (response.rowCount < 15) {
-          res.status(200).json("Faltan preguntas");
-        } else if (response.rowCount >= 15) {
-          res.status(200).json("Preguntas completas");
-        }
-      } else if (genero == "Femenino") {
-        if (response.rowCount < 15) {
-          res.status(200).json("Faltan preguntas");
-        } else if (response.rowCount >= 15) {
-          res.status(200).json("Preguntas completas");
-        }
-      }
-    }
-  } catch (error) {
-    res.status(401).json(error.details);
-  }
-};
-
 const validateExercise = async (req, res) => {
   try {
-    const {documento_en, genero} = req.body;
+    const {documento_en} = req.body;
+
+    // Consulta para contar las respuestas del usuario en específico
     const response = await pool.query(
-      "select * from encuesta where documento_en = $1",
+      "SELECT COUNT(*) as count FROM encuesta WHERE documento_en = $1",
       [documento_en]
     );
 
+    // Verificar si hubo un error en la consulta
     if (response.error) {
-      res.status(401).json(response.error);
+      return res.status(500).json(response.error);
+    }
+
+    // Convertir el resultado de la consulta a número entero
+    const count = parseInt(response.rows[0].count, 10);
+
+    // Verificar el conteo y devolver el mensaje correspondiente
+    if (count === 7) {
+      res.status(200).json("Preguntas completas");
     } else {
-      if (response.rowCount < 1) {
-        res.status(200).json("Faltan preguntas");
-      } else if (response.rowCount == 1 || response.rowCount >= 5) {
-        res.status(200).json("Preguntas completas");
-      } else {
-        res.status(200).json("Faltan preguntas");
-      }
+      res.status(200).json("Faltan preguntas");
     }
   } catch (error) {
-    res.status(401).json(error.details);
+    res.status(500).json({error: error.message});
   }
 };
 
@@ -227,8 +183,6 @@ const updatePasswordPersonal = async (req, res) => {
 module.exports = {
   createPoll,
   selectGenderUserPoll,
-  validateHistory,
-  validateExams,
   validateExercise,
   updatePassword,
 

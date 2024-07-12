@@ -492,7 +492,7 @@ const updatePassword = async (req, res) => {
 const selectUsersPlan = async (req, res) => {
   try {
     const response = await pool.query(
-      "SELECT documento,nombres, primer_apellido, segundo_apellido, id_entrenamiento, nombre_entrenamiento FROM plan_entrenamiento, plan_entre_usuario, usuarios,rol where id_plan_entre= id_entrenamiento and documento_entre=documento and rol=id_rol and estado= 2 and id_rol=5"
+      "SELECT documento,nombres, primer_apellido, segundo_apellido, id_entrenamiento, nombre_entrenamiento FROM plan_entrenamiento, plan_entre_usuario, usuarios,rol where id_plan_entre= id_entrenamiento and documento_entre=documento and rol=id_rol and id_rol=5"
     );
 
     if (response.error) {
