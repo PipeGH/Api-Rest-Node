@@ -123,11 +123,9 @@ const validateExercise = async (req, res) => {
       return res.status(500).json(response.error);
     }
 
-    // Convertir el resultado de la consulta a número entero
     const count = parseInt(response.rows[0].count, 10);
 
-    // Verificar el conteo y devolver el mensaje correspondiente
-    if (count === 7) {
+    if (count >= 7) {
       res.status(200).json("Preguntas completas");
     } else {
       res.status(200).json("Faltan preguntas");

@@ -7,9 +7,9 @@ const {
   selectDocument,
   selectRol,
   selectAllRole,
-  createUsers,
   selectGender,
   selectUser,
+  createUsers,
   updateUsers,
   updateState,
   selectHistory,
@@ -25,7 +25,6 @@ const {
   selectPasswordProfile,
   updatePassword,
   selectUsersPlan,
-  selectGetPlans,
   selectOldUsersFirstPart,
   selectNewUsers,
   selectOldUsersSecondtPart,
@@ -61,9 +60,10 @@ router.get("/selectDocument", selectDocument);
 router.get("/selectRol", selectRol);
 router.get("/selectAllRole", selectAllRole);
 router.get("/selectGender", selectGender);
-router.post("/createUsers", createUsers);
 
 router.post("/selectUser", selectUser);
+router.post("/createUsers", createUsers);
+
 router.post("/updateUsers", updateUsers);
 
 router.put("/updateState", updateState);
@@ -130,7 +130,7 @@ router.post("/searchOnePersonalTitle", searchOnePersonalTitle);
 
 const {Pool} = require("pg");
 const multer = require("multer");
-
+const Cryptr = require("cryptr");
 //Conexión con la base de datos
 
 const pool = new Pool({
@@ -142,6 +142,7 @@ const pool = new Pool({
 });
 
 //Metodos-------------------------
+const cryptr = new Cryptr("WmZq4t7w9z$C&FJ@NcRfUjXn2r5u8x/");
 
 var storage = multer.diskStorage({
   filename: (req, file, callBack) => {
@@ -150,7 +151,7 @@ var storage = multer.diskStorage({
 });
 
 var upload = multer({
-  storage: storage,
+  storage: storage, //Definición de variables de encriptación---------------------------------------------->
 });
 
 router.post("/createImgProfile", upload.single("file"), async (req, res) => {
