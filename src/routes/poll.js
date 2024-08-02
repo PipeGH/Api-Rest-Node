@@ -29,12 +29,11 @@ const multer = require("multer");
 
 const pool = new Pool({
   host: "localhost",
-  database: "gimnasio",
   user: "postgres",
-  port: 5432,
   password: "1234",
+  database: "gimnasio",
+  port: 5432,
 });
-
 var storage = multer.diskStorage({
   filename: (req, file, callBack) => {
     callBack(null, file.fileRaw + "-" + Date.now() + ".png");

@@ -4,10 +4,10 @@ const {Pool} = require("pg");
 
 const pool = new Pool({
   host: "localhost",
-  database: "gimnasio",
   user: "postgres",
-  port: 5432,
   password: "1234",
+  database: "gimnasio",
+  port: 5432,
 });
 
 //Definición de los métodos--------------------------------------------->
@@ -104,10 +104,17 @@ const createTraining = async (req, res) => {
       id_ejercicio,
       id_tipo_de_ejecucion,
       dias_entre,
+      posicion_ejer,
     } = req.body;
     const response = await pool.query(
-      "insert into entrenamiento (id_plan_entrenamiento, id_ejercicio, id_tipo_de_ejecucion, dias_entre) values ($1,$2,$3,$4)",
-      [id_plan_entrenamiento, id_ejercicio, id_tipo_de_ejecucion, dias_entre]
+      "insert into entrenamiento (id_plan_entrenamiento, id_ejercicio, id_tipo_de_ejecucion, dias_entre, posicion_ejer) values ($1,$2,$3,$4,$5)",
+      [
+        id_plan_entrenamiento,
+        id_ejercicio,
+        id_tipo_de_ejecucion,
+        dias_entre,
+        posicion_ejer,
+      ]
     );
 
     if (response.error) {

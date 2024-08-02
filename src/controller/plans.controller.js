@@ -5,10 +5,10 @@ const {Pool} = require("pg");
 
 const pool = new Pool({
   host: "localhost",
-  database: "gimnasio",
   user: "postgres",
-  port: 5432,
   password: "1234",
+  database: "gimnasio",
+  port: 5432,
 });
 
 //Definición de los métodos-------------------------------------

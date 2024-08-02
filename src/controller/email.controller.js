@@ -4,12 +4,12 @@ const nodemailer = require("nodemailer");
 //Conexión a la base de datos------------------------------------------------------>
 
 const pool = new Pool({
-  host: "localhost",
-  user: "postgres",
-  password: "1234",
-  database: "gimnasio",
-  port: 5432,
-});
+    host: "localhost",
+    user: "gimnasio",
+    password: "1234",
+    database: "postgres",
+    port: 5432,
+  });
 
 //Definición de los métodos--------------------------------------------------------->
 
@@ -70,7 +70,7 @@ const sendEmailWelcome = async (req, res) => {
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                             <tr>
                                 <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                                    <p style="margin: 0;">El gimnasio Reto 21 te da la bienvenida a nuestras instalaciones. con nosotros podras lograr tus objetivos</p>
+                                    <p style="margin: 0;">El postgres Reto 21 te da la bienvenida a nuestras instalaciones. con nosotros podras lograr tus objetivos</p>
                                 </td>
                             </tr>
                             <tr>
@@ -993,7 +993,7 @@ const sendEmailCodeUpdatePassword = async (req, res) => {
                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
                             <tr>
                                 <td bgcolor="#ffffff" align="left" style="padding: 20px 30px 40px 30px; color: #666666; font-family: 'Lato', Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 25px;">
-                                    <p style="margin: 0;">El gimnasio Reto 21 te da la bienvenida a nuestras instalaciones. con notros podras lograr tus objetivos</p>
+                                    <p style="margin: 0;">El postgres Reto 21 te da la bienvenida a nuestras instalaciones. con notros podras lograr tus objetivos</p>
                                     <strong class="d-flex justify-content-center" style="padding: 12px;">¿Aceptas el reto?</strong>
                                 </td>
                             </tr>

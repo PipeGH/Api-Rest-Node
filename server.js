@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
-//Definición de las rutas
+// Importar rutas
 const login = require("./src/routes/login");
 const users = require("./src/routes/users");
 const system = require("./src/routes/sistema");
@@ -18,8 +18,9 @@ const challenges = require("./src/routes/challenges");
 const notification = require("./src/routes/notification");
 const poll = require("./src/routes/poll");
 const email = require("./src/routes/email");
+const counter = require("./src/routes/counter");
 
-//Definición de los middleware
+// Middleware
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cors());
@@ -28,16 +29,15 @@ if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
 
-//Definición del puerto----------------------------------------------------
+// Configuración del puerto
 app.set("port", process.env.PORT);
 
-//ruta principal-----------------------------------------------------------
+// Ruta principal
 app.get("/", (req, res) => {
   res.send("Web service on");
 });
 
-//Rutas--------------------------------------------------------------------
-
+// Rutas
 app.use("/login", login);
 app.use("/users", users);
 app.use("/system", system);
@@ -52,8 +52,9 @@ app.use("/challenges", challenges);
 app.use("/notification", notification);
 app.use("/poll", poll);
 app.use("/email", email);
+app.use("/counter", counter);
 
-//Asignación del puerto -> En donde se corre el servidor-------------------
+// Iniciar servidor
 app.listen(app.get("port"), () => {
   console.log("Active web service on the port", app.get("port"));
 });
