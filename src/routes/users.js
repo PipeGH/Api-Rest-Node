@@ -9,6 +9,7 @@ const {
   selectAllRole,
   selectGender,
   selectUser,
+  selectTeam,
   createUsers,
   updateUsers,
   updateState,
@@ -56,6 +57,7 @@ const {
 
 //Definición de las rutas-------------------------------------------------------->
 router.post("/selectUsers", selectUsers);
+router.post("/selectTeam", selectTeam);
 router.get("/selectDocument", selectDocument);
 router.get("/selectRol", selectRol);
 router.get("/selectAllRole", selectAllRole);
@@ -135,10 +137,10 @@ const Cryptr = require("cryptr");
 
 const pool = new Pool({
   host: "localhost",
-  database: "gimnasio",
   user: "postgres",
-  port: 5432,
   password: "1234",
+  database: "gimnasio",
+  port: 5432,
 });
 
 //Metodos-------------------------
@@ -190,11 +192,24 @@ router.post("/updateImgProfile", upload.single("file"), async (req, res) => {
   try {
     const fs = require("fs");
 
-    var foto_personal = fs.readFileSync(req.file.path);
-    const {id_foto} = req.body;
+    const foto_personal = fs.readFileSync(req.file.path);
+    const {documento} = req.body;
 
+    // Obtener id_foto correspondiente al documento
+    const userResponse = await pool.query(
+      "SELECT img FROM usuarios WHERE documento = $1",
+      [documento]
+    );
+
+    if (userResponse.rows.length === 0) {
+      return res.status(404).json("Usuario no encontrado");
+    }
+
+    const id_foto = userResponse.rows[0].img;
+
+    // Actualizar la imagen en la tabla foto
     const response = await pool.query(
-      "update foto set foto_personal = $1 where id_foto = $2",
+      "UPDATE foto SET foto_personal = $1 WHERE id_foto = $2",
       [foto_personal, id_foto]
     );
 
@@ -204,7 +219,7 @@ router.post("/updateImgProfile", upload.single("file"), async (req, res) => {
       res.status(200).json("Imagen actualizada con éxito");
     }
   } catch (error) {
-    res.status(401).json(error);
+    res.status(500).json("Error al actualizar la imagen");
   }
 });
 

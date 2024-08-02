@@ -10,10 +10,10 @@ const {json} = require("body-parser");
 
 const pool = new Pool({
   host: "localhost",
-  database: "gimnasio",
   user: "postgres",
-  port: 5432,
   password: "1234",
+  database: "gimnasio",
+  port: 5432,
 });
 
 //Definición de variables de encriptación---------------------------------------------->
@@ -95,6 +95,7 @@ const selectGender = async (req, res) => {
     res.status(401).json("Error en el servidor, intente más tarde");
   }
 };
+
 const createUsers = async (req, res) => {
   try {
     const {
@@ -194,7 +195,7 @@ const selectUser = async (req, res) => {
   try {
     const {documento} = req.body;
     const response = await pool.query(
-      "select documento,correo, nombres, primer_apellido, segundo_apellido,rol, tipo_de_documento,estado, genero, numero_telefono from usuarios, telefono where documento_usuario = documento and documento = $1",
+      "select documento,correo, nombres, primer_apellido, segundo_apellido,rol, tipo_de_documento,estado, genero, numero_telefono, foto_personal from usuarios, telefono, foto where img= id_foto and documento_usuario = documento and documento = $1",
       [documento]
     );
 
@@ -205,6 +206,37 @@ const selectUser = async (req, res) => {
     }
   } catch (error) {
     res.status(401).json(error.details);
+  }
+};
+const selectTeam = async (req, res) => {
+  try {
+    const response = await pool.query(
+      `SELECT 
+        documento, 
+        nombres, 
+        primer_apellido, 
+        segundo_apellido, 
+        nombre_rol, 
+        foto_personal
+      FROM 
+        usuarios
+      JOIN 
+        rol ON rol.id_rol = usuarios.rol
+      JOIN 
+        genero ON genero.id_genero = usuarios.genero
+      JOIN 
+        estado_cuenta ON estado_cuenta.id_cuenta = usuarios.estado
+      JOIN 
+        foto ON id_foto = usuarios.img
+      WHERE 
+  
+        rol.id_rol <> 5
+      ORDER BY 
+        nombre_rol ASC`
+    );
+    res.json(response.rows);
+  } catch (error) {
+    res.status(401).json("Error en el servidor, intentelo más tarde");
   }
 };
 
@@ -342,10 +374,11 @@ const profileUser = async (req, res) => {
   try {
     const {documento} = req.body;
     const response = await pool.query(
-      "select documento,correo, nombres, primer_apellido, segundo_apellido,nombre_rol, nombre_tipo_documento, nombre_tipo_genero, numero_telefono, foto_personal from foto, tipo_documento, genero, rol, usuarios, telefono where rol = id_rol and tipo_de_documento = id_documento and genero = id_genero and documento_usuario = documento and img = id_foto and documento_usuario = documento and documento = $1",
+      "SELECT documento, correo, nombres, primer_apellido, segundo_apellido, nombre_rol, nombre_tipo_documento, nombre_tipo_genero, numero_telefono, foto_personal " +
+        "FROM foto, tipo_documento, genero, rol, usuarios, telefono " +
+        "WHERE rol = id_rol AND tipo_de_documento = id_documento AND genero = id_genero AND documento_usuario = documento AND img = id_foto AND documento_usuario = documento AND documento = $1",
       [documento]
     );
-
     if (response.error) {
       res.status(401).json(response.error);
     } else {
@@ -810,6 +843,8 @@ const selectTypeValoracion = async (req, res) => {
     res.status(401).json(error.details);
   }
 };
+const counterController = require("../controller/counter.controller"); // Importar el módulo del contador
+
 const createNewUser = async (req, res) => {
   try {
     const {
@@ -863,35 +898,39 @@ const createNewUser = async (req, res) => {
       ]
     );
 
-    // Insertar en la tabla telefono
+    // Insertar en las demás tablas
     await pool.query(
       "INSERT INTO telefono (documento_usuario, numero_telefono) VALUES ($1, $2)",
       [documento, numero_telefono]
     );
 
-    // Insertar en la tabla pago
     await pool.query(
       "INSERT INTO pago (id_suscripcion_pago, documento_usuarios_pago, fecha_de_inicio, fecha_de_fin) VALUES ($1, $2, current_date, $3)",
       [id_suscripcion_pago, documento, fecha_de_fin]
     );
 
-    // Insertar en la tabla tipo_usuario
     await pool.query(
       "INSERT INTO tipo_usuario (id_valoracion_tipo, documento_tipo) VALUES ($1, $2)",
       [id_valoracion_tipo, documento]
     );
 
-    // Insertar en la tabla plan_entre_usuario
     await pool.query(
       "INSERT INTO plan_entre_usuario (id_plan_entre, documento_entre) VALUES ($1, $2)",
       [68642480, documento]
+    );
+
+    // Incrementar el contador semanal
+    await counterController.incrementCounter();
+
+    const currentWeekCount = await counterController.getCurrentWeekCount();
+    console.log(
+      `Usuario registrado. Contador semanal actual: ${currentWeekCount}`
     );
 
     res.status(200).json("Nuevo usuario creado con éxito");
   } catch (error) {
     console.error("Error al registrar el usuario:", error);
     if (error.constraint === "usuarios_documento_key") {
-      // Verificación de violación de restricción única para 'documento'
       res
         .status(400)
         .json("El documento que ingresó ya se encuentra registrado");
@@ -1199,6 +1238,7 @@ module.exports = {
   createUsers,
   updateUsers,
   selectUser,
+  selectTeam,
   updateState,
   selectHistory,
   promedioAssist,
