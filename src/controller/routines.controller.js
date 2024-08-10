@@ -126,14 +126,56 @@ const createTraining = async (req, res) => {
     res.status(401).json(error.details);
   }
 };
+const updateTrainingPosition = async (req, res) => {
+  try {
+    console.log("Entró en el método updateTrainingPosition");
+
+    const {order, id_plan_entrenamiento} = req.body;
+
+    if (!id_plan_entrenamiento || !Array.isArray(order)) {
+      return res.status(400).json({error: "Faltan datos necesarios"});
+    }
+
+    console.log("Datos recibidos:", {order, id_plan_entrenamiento});
+
+    // Usa una transacción para asegurar que todas las actualizaciones se hagan correctamente
+    await pool.query("BEGIN");
+
+    // Crea una consulta SQL que actualiza todas las posiciones en una sola operación
+    const updateQueries = order.map((item) => {
+      return pool.query(
+        "UPDATE entrenamiento SET posicion_ejer = $1 WHERE id_ejercicio = $2 AND id_plan_entrenamiento = $3",
+        [item.posicion_ejer, item.id_ejercicio, id_plan_entrenamiento]
+      );
+    });
+
+    // Espera que todas las actualizaciones se completen
+    await Promise.all(updateQueries);
+
+    // Si todo fue bien, haz commit a la transacción
+    await pool.query("COMMIT");
+
+    res
+      .status(200)
+      .json({message: "Orden de ejercicios actualizado con éxito"});
+  } catch (error) {
+    // En caso de error, realiza rollback a la transacción
+    await pool.query("ROLLBACK");
+    console.error("Error al actualizar el orden de los ejercicios:", error);
+    res.status(500).json({
+      error: "Error al actualizar el orden de los ejercicios",
+      details: error.message,
+    });
+  }
+};
 
 const deleteTraining = async (req, res) => {
   try {
-    const {id_ejercicio, id_plan_entrenamiento} = req.body;
+    const {id_ejercicio, id_plan_entrenamiento, dias_entre} = req.body;
     console.log(req.body);
     const response = await pool.query(
-      "delete from entrenamiento where id_ejercicio = $1 and id_plan_entrenamiento = $2 ",
-      [id_ejercicio, id_plan_entrenamiento]
+      "delete from entrenamiento where id_ejercicio = $1 and id_plan_entrenamiento = $2 and dias_entre = $3",
+      [id_ejercicio, id_plan_entrenamiento, dias_entre]
     );
 
     if (response.error) {
@@ -150,7 +192,39 @@ const selectTrainingPlan = async (req, res) => {
   try {
     const {id_entrenamiento, dias_entre} = req.body;
     const response = await pool.query(
-      "select id_ejercicios, nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_series,nombre_repeticion from repeticiones, series,plan_entrenamiento, entrenamiento, sub_categoria,ejercicios, categoria, categoria_sub, tipo_ejecucion where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and id_sub_Cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and categoria=id_sub_cat and id_entrenamiento=$1 and dias_entre=$2",
+      `SELECT 
+      id_ejercicios, 
+      nombre_ejercicios, 
+      nombre_categoria, 
+      nombre_sub, 
+      nombre_ejecucion, 
+      numero_series, 
+      nombre_series, 
+      nombre_repeticion,
+      posicion_ejer 
+    FROM 
+      repeticiones, 
+      series,
+      plan_entrenamiento, 
+      entrenamiento, 
+      sub_categoria, 
+      ejercicios, 
+      categoria, 
+      categoria_sub, 
+      tipo_ejecucion 
+    WHERE 
+      id_plan_entrenamiento = id_entrenamiento 
+      AND id_ejercicio = id_ejercicios 
+      AND id_categoria_cat = id_categoria 
+      AND id_sub_Cat = id_sub 
+      AND id_tipo_de_ejecucion = id_ejecucion 
+      AND id_serie = id_series 
+      AND id_repes = id_repeticiones 
+      AND categoria = id_sub_cat 
+      AND id_entrenamiento = $1 
+      AND dias_entre = $2
+    ORDER BY 
+      posicion_ejer ASC;`,
       [id_entrenamiento, dias_entre]
     );
 
@@ -491,6 +565,7 @@ module.exports = {
   selectRepetitions,
   selectTipoEjecucion,
   createTraining,
+  updateTrainingPosition,
   deleteTraining,
   selectTrainingPlan,
   finishRoutine,

@@ -919,9 +919,9 @@ const createNewUser = async (req, res) => {
       [68642480, documento]
     );
 
-    // Incrementar el contador semanal
     await counterController.incrementCounter();
 
+    await counterController.recalculateCurrentWeekCount();
     const currentWeekCount = await counterController.getCurrentWeekCount();
     console.log(
       `Usuario registrado. Contador semanal actual: ${currentWeekCount}`

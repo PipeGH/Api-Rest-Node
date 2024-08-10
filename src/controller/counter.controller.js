@@ -119,6 +119,17 @@ const resetWeeklyCounter = async () => {
     );
   }
 };
+const recalculateCurrentWeekCount = async () => {
+  try {
+    const result = await pool.query(
+      "SELECT COUNT(*) AS count FROM usuarios WHERE created_at >= date_trunc('week', CURRENT_DATE) AND created_at < date_trunc('week', CURRENT_DATE) + interval '1 week'"
+    );
+    currentWeekCount = result.rows[0].count;
+    console.log(`Contador recalculado: ${currentWeekCount}`);
+  } catch (error) {
+    console.error("Error al recalcular el contador semanal:", error);
+  }
+};
 
 //reiniciar el contador semanalmente
 setInterval(resetWeeklyCounter, 24 * 60 * 60 * 1000);
@@ -134,4 +145,5 @@ module.exports = {
   getCurrentWeekCount,
   getTodayRegistrations,
   resetWeeklyCounter,
+  recalculateCurrentWeekCount,
 };
