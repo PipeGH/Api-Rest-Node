@@ -10,7 +10,7 @@ const {
   selectRepetitions,
   selectTipoEjecucion,
   createTraining,
-  updateTrainingPosition,
+  //updateTrainingPosition,
   deleteTraining,
   selectTrainingPlan,
   finishRoutine,
@@ -37,7 +37,7 @@ router.get("/selectSeries", selectSeries);
 router.get("/selectRepetitions", selectRepetitions);
 router.get("/selectTipoEjecucion", selectTipoEjecucion);
 router.post("/createTraining", createTraining);
-router.post("/updateTrainingPosition", updateTrainingPosition);
+//router.post("/updateTrainingPosition", updateTrainingPosition);
 router.post("/deleteTraining", deleteTraining);
 router.post("/selectTrainingPlan", selectTrainingPlan);
 router.post("/finishRoutine", finishRoutine);
