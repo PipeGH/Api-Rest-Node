@@ -35,7 +35,7 @@ const selectTraining = async (req, res) => {
        JOIN 
          categoria c ON cs.id_categoria_cat = c.id_categoria
        ORDER BY 
-         c.nombre_categoria ASC
+         e.id_ejercicios ASC
        LIMIT $1 OFFSET $2`,
       [itemsPerPage, offset]
     );
