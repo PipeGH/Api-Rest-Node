@@ -14,17 +14,49 @@ const pool = new Pool({
 
 const selectTraining = async (req, res) => {
   try {
-    const response = await pool.query(
-      "SELECT id_ejercicios, nombre_ejercicios, descripcion, imagen, video, nombre_categoria,nombre_sub FROM ejercicios, sub_categoria, categoria, categoria_sub where categoria= id_sub and id_categoria_cat=id_categoria and id_sub_cat=id_sub order by id_ejercicios ASC"
+    const {page = 1, itemsPerPage = 5} = req.query;
+    const offset = (page - 1) * itemsPerPage;
+
+    const exercisesQuery = pool.query(
+      `SELECT 
+         e.id_ejercicios, 
+         e.nombre_ejercicios, 
+         e.descripcion, 
+         e.imagen, 
+         e.video, 
+         c.nombre_categoria, 
+         s.nombre_sub
+       FROM 
+         ejercicios e
+       JOIN 
+         sub_categoria s ON e.categoria = s.id_sub
+       JOIN 
+         categoria_sub cs ON s.id_sub = cs.id_sub_cat
+       JOIN 
+         categoria c ON cs.id_categoria_cat = c.id_categoria
+       ORDER BY 
+         c.nombre_categoria ASC
+       LIMIT $1 OFFSET $2`,
+      [itemsPerPage, offset]
     );
 
-    if (response.error) {
-      res.status(401).json(response.error);
-    } else {
-      res.status(200).json(response.rows);
-    }
+    const countQuery = pool.query(
+      `SELECT COUNT(*) AS totalItems FROM ejercicios`
+    );
+
+    const [exercisesResponse, countResponse] = await Promise.all([
+      exercisesQuery,
+      countQuery,
+    ]);
+
+    res.json({
+      exercises: exercisesResponse.rows,
+      itemsPerPage: parseInt(itemsPerPage, 10),
+      currentPage: parseInt(page, 10),
+      totalItems: parseInt(countResponse.rows[0].totalitems, 10),
+    });
   } catch (error) {
-    res.status(401).json(error.details);
+    res.status(401).json({message: error.message});
   }
 };
 
