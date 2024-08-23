@@ -289,6 +289,43 @@ const createAlimento = async (req, res) => {
     res.status(401).json(error.details);
   }
 };
+const saveRecomendation = async (req, res) => {
+  try {
+    const {id_plan_nutri, recomendacion} = req.body;
+    const response = await pool.query(
+      "insert into reco_plan_nutri (id_plan_nutri, recomendaciones) values ($1,$2)",
+      [id_plan_nutri, recomendacion]
+    );
+
+    if (response.error) {
+      res.status(401).json(response.error);
+    } else {
+      res.status(200).json("Recomendacion insertada con exito");
+    }
+  } catch (error) {
+    res.status(401).json(error.details);
+  }
+};
+const updateRecomendation = async (req, res) => {
+  try {
+    const {id_plan_nutri, recomendaciones} = req.body;
+
+    const response = await pool.query(
+      `INSERT INTO reco_plan_nutri (id_plan_nutri, recomendaciones)
+       VALUES ($1, $2)
+       ON CONFLICT (id_plan_nutri)
+       DO UPDATE SET recomendaciones = EXCLUDED.recomendaciones`,
+      [id_plan_nutri, recomendaciones]
+    );
+
+    res.status(200).json("Recomendación actualizada o insertada con éxito");
+  } catch (error) {
+    res.status(401).json({
+      message: "Error al actualizar o insertar la recomendación",
+      error: error.message,
+    });
+  }
+};
 
 const validateBreakfast = async (req, res) => {
   try {
@@ -400,6 +437,30 @@ const assingNutritionOldUser = async (req, res) => {
     }
   } catch (error) {
     res.status(401).json(error.details);
+  }
+};
+
+const selectRecomendation = async (req, res) => {
+  try {
+    console.log("Parámetros recibidos:", req.body); // Imprime los parámetros recibidos
+
+    const {id_nutricional} = req.body; // Obtén el id del cuerpo de la solicitud
+    const response = await pool.query(
+      "SELECT * FROM reco_plan_nutri WHERE id_plan_nutri = $1",
+      [id_nutricional]
+    );
+    console.log("Resultado de la consulta:", response.rows); // Imprime el resultado de la consulta
+
+    if (response.error) {
+      res.status(401).json(response.error);
+    } else {
+      res.status(200).json(response.rows);
+    }
+  } catch (error) {
+    res.status(401).json({
+      message: "Error al consultar la recomendación",
+      error: error.message,
+    });
   }
 };
 
@@ -589,11 +650,14 @@ module.exports = {
   selectAlimento,
   selectIngredientes,
   createAlimento,
+  saveRecomendation,
+  updateRecomendation,
   validateBreakfast,
   cancellPocess,
   cancellPocessPersonal,
   assingNutritionOldUser,
   selectRegisteredNutrition,
+  selectRecomendation,
   selectOneRegisteredNutrition,
   deleteDataNutrition,
   searchNameNutrition,

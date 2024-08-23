@@ -18,11 +18,14 @@ const {
   selectAlimento,
   selectIngredientes,
   createAlimento,
+  saveRecomendation,
+  updateRecomendation,
   validateBreakfast,
   cancellPocess,
   cancellPocessPersonal,
   assingNutritionOldUser,
   selectRegisteredNutrition,
+  selectRecomendation,
   selectOneRegisteredNutrition,
   deleteDataNutrition,
   searchNameNutrition,
@@ -52,14 +55,16 @@ router.post("/createPlanNutritionPersonal", createPlanNutritionPersonal);
 router.get("/selectAlimento", selectAlimento);
 router.post("/selectIngredientes", selectIngredientes);
 router.post("/createAlimento", createAlimento);
+router.post("/saveRecomendation", saveRecomendation);
+router.post("/updateRecomendation", updateRecomendation);
 router.post("/validateBreakfast", validateBreakfast);
 router.post("/cancellPocess", cancellPocess);
 router.post("/cancellPocessPersonal", cancellPocessPersonal);
 router.post("/assingNutritionOldUser", assingNutritionOldUser);
 router.post("/selectRegisteredNutrition", selectRegisteredNutrition);
+router.post("/selectRecomendation", selectRecomendation);
 router.post("/selectOneRegisteredNutrition", selectOneRegisteredNutrition);
 router.post("/updateDataNutrition", deleteDataNutrition);
-
 router.post("/searchNameNutrition", searchNameNutrition);
 router.post("/selectDataNutritionPersonal", selectDataNutritionPersonal);
 router.post("/selectInfoGeneralUser", selectInfoGeneralUser);
