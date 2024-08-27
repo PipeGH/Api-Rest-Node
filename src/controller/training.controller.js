@@ -11,51 +11,46 @@ const pool = new Pool({
 });
 
 //Definición de métodos----------------------------------------------------------------->
-
 const selectTraining = async (req, res) => {
   try {
-    const {page = 1, itemsPerPage = 5} = req.query;
-    const offset = (page - 1) * itemsPerPage;
+    const {categoria} = req.query;
 
-    const exercisesQuery = pool.query(
-      `SELECT 
-         e.id_ejercicios, 
-         e.nombre_ejercicios, 
-         e.descripcion, 
-         e.imagen, 
-         e.video, 
-         c.nombre_categoria, 
-         s.nombre_sub
-       FROM 
-         ejercicios e
-       JOIN 
-         sub_categoria s ON e.categoria = s.id_sub
-       JOIN 
-         categoria_sub cs ON s.id_sub = cs.id_sub_cat
-       JOIN 
-         categoria c ON cs.id_categoria_cat = c.id_categoria
-       ORDER BY 
-         e.id_ejercicios ASC
-       LIMIT $1 OFFSET $2`,
-      [itemsPerPage, offset]
-    );
+    let query = `
+      SELECT 
+        e.id_ejercicios, 
+        e.nombre_ejercicios, 
+        e.descripcion, 
+        e.imagen, 
+        e.video, 
+        c.nombre_categoria, 
+        s.nombre_sub
+      FROM 
+        ejercicios e
+      JOIN 
+        sub_categoria s ON e.categoria = s.id_sub
+      JOIN 
+        categoria_sub cs ON s.id_sub = cs.id_sub_cat
+      JOIN 
+        categoria c ON cs.id_categoria_cat = c.id_categoria
+    `;
 
-    const countQuery = pool.query(
-      `SELECT COUNT(*) AS totalItems FROM ejercicios`
-    );
+    const queryParams = [];
 
-    const [exercisesResponse, countResponse] = await Promise.all([
-      exercisesQuery,
-      countQuery,
-    ]);
+    if (categoria && categoria !== "0") {
+      query += ` WHERE c.nombre_categoria = $1`;
+      queryParams.push(categoria);
+    }
+
+    query += ` ORDER BY e.id_ejercicios ASC`;
+
+    // Realiza la consulta de ejercicios
+    const exercisesResponse = await pool.query(query, queryParams);
 
     res.json({
-      exercises: exercisesResponse.rows,
-      itemsPerPage: parseInt(itemsPerPage, 10),
-      currentPage: parseInt(page, 10),
-      totalItems: parseInt(countResponse.rows[0].totalitems, 10),
+      exercises: exercisesResponse.rows, // Enviar todos los ejercicios al frontend
     });
   } catch (error) {
+    console.error("Error in selectTraining:", error);
     res.status(401).json({message: error.message});
   }
 };
