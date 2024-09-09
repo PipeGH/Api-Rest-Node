@@ -153,7 +153,49 @@ const createUsers = async (req, res) => {
     res.status(500).json("Error al registrar el usuario, intente nuevamente");
   }
 };
+const createEmployee = async (req, res) => {
+  try {
+    const {
+      documento,
+      nombres,
+      primer_apellido,
+      segundo_apellido,
+      cargo,
+      formacion,
+      informacion,
+    } = req.body;
 
+    // Verificar si el documento ya existe
+    const existingUser = await pool.query(
+      "SELECT 1 FROM equipo_trabajo WHERE documento = $1",
+      [documento]
+    );
+
+    if (existingUser.rows.length > 0) {
+      return res
+        .status(400)
+        .json("El documento que ingresó ya se encuentra registrado");
+    }
+
+    await pool.query(
+      "INSERT INTO equipo_trabajo(documento, nombres, primer_apellido, segundo_apellido, cargo, formacion, informacion) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+      [
+        documento,
+        nombres,
+        primer_apellido,
+        segundo_apellido,
+        cargo,
+        formacion,
+        informacion,
+      ]
+    );
+
+    res.json("Empleado registrado satisfactoriamente");
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Error al registrar el empleado, intente nuevamente");
+  }
+};
 const updateUsers = async (req, res) => {
   try {
     const {
@@ -191,6 +233,41 @@ const updateUsers = async (req, res) => {
   }
 };
 
+const updateEmployees = async (req, res) => {
+  try {
+    const {
+      documento,
+      nombres,
+      primer_apellido,
+      segundo_apellido,
+      cargo,
+      formacion,
+      informacion,
+    } = req.body;
+
+    const response = await pool.query(
+      "update equipo_trabajo set nombres = $1, primer_apellido = $2, segundo_apellido = $3, cargo = $4, formacion = $5, informacion = $6 where documento = $7",
+      [
+        nombres,
+        primer_apellido,
+        segundo_apellido,
+        cargo,
+        formacion,
+        informacion,
+        documento,
+      ]
+    );
+
+    if (response.error) {
+      res.status(401).json(response.error);
+    } else {
+      res.status(200).json("Datos actualizados con éxito");
+    }
+  } catch (error) {
+    res.status(401).json(error);
+  }
+};
+
 const selectUser = async (req, res) => {
   try {
     const {documento} = req.body;
@@ -211,35 +288,44 @@ const selectUser = async (req, res) => {
 const selectTeam = async (req, res) => {
   try {
     const response = await pool.query(
-      `SELECT 
-        documento, 
-        nombres, 
-        primer_apellido, 
-        segundo_apellido, 
-        nombre_rol, 
-        foto_personal
-      FROM 
-        usuarios
-      JOIN 
-        rol ON rol.id_rol = usuarios.rol
-      JOIN 
-        genero ON genero.id_genero = usuarios.genero
-      JOIN 
-        estado_cuenta ON estado_cuenta.id_cuenta = usuarios.estado
-      JOIN 
-        foto ON id_foto = usuarios.img
-      WHERE 
-  
-        rol.id_rol <> 5
-      ORDER BY 
-        nombre_rol ASC`
+      `SELECT documento, nombres, primer_apellido, segundo_apellido, cargo, formacion, informacion, id_foto, foto_empleado FROM equipo_trabajo`
     );
+
     res.json(response.rows);
+    console.log(response.rows);
+    console.log("este es el documento del pelao");
   } catch (error) {
     res.status(401).json("Error en el servidor, intentelo más tarde");
   }
 };
+const selectEmployee = async (req, res) => {
+  const {documento} = req.body;
 
+  try {
+    const response = await pool.query(
+      `SELECT documento, nombres, primer_apellido, segundo_apellido, cargo, formacion, informacion, foto_empleado FROM equipo_trabajo where documento =$1`,
+      [documento]
+    );
+    res.json(response.rows);
+    console.log("Mirame aqui grannnnnn hhhhhhh");
+  } catch (error) {
+    res.status(401).json("Error en el servidor, intentelo más tarde");
+  }
+};
+const selectOneEmpl = async (req, res) => {
+  const {documento} = req.body;
+
+  try {
+    const response = await pool.query(
+      `SELECT documento, nombres, primer_apellido, segundo_apellido, cargo, formacion, informacion, foto_personal FROM equipo_trabajo, foto where foto = id_foto and documento =$1`,
+      [documento]
+    );
+    res.json(response.rows);
+    console.log(response.rows);
+  } catch (error) {
+    res.status(401).json("Error en el servidor, intentelo más tarde");
+  }
+};
 const updateState = async (req, res) => {
   const {document, state} = req.body;
   console.log(req.body);
@@ -406,11 +492,29 @@ const selectVerifyImg = async (req, res) => {
     res.status(401).json(error.error);
   }
 };
+const selectImgEmp = async (req, res) => {
+  try {
+    const {documento} = req.body;
+    const response = await pool.query(
+      "select id_foto from equipo_trabajo where documento = $1",
+      [documento]
+    );
+
+    if (response.error) {
+      res.status(401).json(response.error);
+    } else {
+      res.status(200).json(response.rows);
+    }
+  } catch (error) {
+    res.status(401).json(error.error);
+  }
+};
 
 const deleteImgProfile = async (req, res) => {
   try {
-    const {id_foto, documento} = req.body;
     const img = 1;
+
+    const {id_foto, documento} = req.body;
     const response = await pool.query(
       "update usuarios set img = $1 where documento = $2",
       [img, documento]
@@ -431,6 +535,77 @@ const deleteImgProfile = async (req, res) => {
       }
     }
   } catch (error) {
+    res.status(401).json(error.details);
+  }
+};
+const deleteImgEmp = async (req, res) => {
+  try {
+    const {documento} = req.body;
+
+    // Actualiza el campo foto_empleado en equipo_trabajo con la foto por defecto de la tabla foto
+    const response = await pool.query(
+      `UPDATE equipo_trabajo 
+       SET foto_empleado = (
+         SELECT foto_personal FROM foto WHERE id_foto = 1
+       ) 
+       WHERE documento = $1`,
+      [documento]
+    );
+
+    if (response.rowCount === 0) {
+      return res
+        .status(404)
+        .json("Empleado no encontrado o sin imagen asociada");
+    }
+
+    res
+      .status(200)
+      .json(
+        "Imagen eliminada con éxito y foto_empleado actualizada a la imagen por defecto"
+      );
+  } catch (error) {
+    res.status(500).json({
+      error: "Ocurrió un error al eliminar la imagen",
+      details: error.message,
+    });
+  }
+};
+const deleteUser = async (req, res) => {
+  console.log(req.body);
+  try {
+    const {documento} = req.params;
+    console.log("Documento recibido:", documento);
+    await pool.query("BEGIN"); // Inicia la transacción
+
+    const deleteQuery = `
+      WITH deleted_pagos AS (
+        DELETE FROM pago WHERE documento_usuarios_pago = $1
+      ),
+      deleted_planes AS (
+        DELETE FROM plan_entre_usuario WHERE documento_entre = $1
+      ),
+      deleted_telefonos AS (
+        DELETE FROM telefono WHERE documento_usuario = $1
+      ),
+      deleted_tipos AS (
+        DELETE FROM tipo_usuario WHERE documento_tipo = $1
+      ),
+      deleted_valoracion_basic AS (
+        DELETE FROM valoracion_basica WHERE documento_valoracion = $1
+      ),
+       deleted_valoracion_av AS (
+        DELETE FROM valoracion_avanzada WHERE documento_valoracion = $1
+      ),
+      deleted_plan_nutricional AS (
+        DELETE FROM plan_nutricional_usuarios WHERE documento_plan = $1
+      ),
+        deleted_educacion AS (
+        DELETE FROM educacion_usuarios WHERE documento_usuarios_titulo = $1
+      )
+      DELETE FROM usuarios WHERE documento = $1;
+    `;
+  } catch (error) {
+    await pool.query("ROLLBACK"); // Revierte la transacción en caso de error
     res.status(401).json(error.details);
   }
 };
@@ -844,6 +1019,7 @@ const selectTypeValoracion = async (req, res) => {
   }
 };
 const counterController = require("../controller/counter.controller"); // Importar el módulo del contador
+const {log} = require("console");
 
 const createNewUser = async (req, res) => {
   try {
@@ -1236,9 +1412,13 @@ module.exports = {
   selectAllRole,
   selectGender,
   createUsers,
+  createEmployee,
   updateUsers,
+  updateEmployees,
   selectUser,
   selectTeam,
+  selectEmployee,
+  selectOneEmpl,
   updateState,
   selectHistory,
   promedioAssist,
@@ -1248,13 +1428,15 @@ module.exports = {
   selectImgUser,
   profileUser,
   selectVerifyImg,
+  selectImgEmp,
   deleteImgProfile,
+  deleteImgEmp,
+  deleteUser,
   updateProfile,
   selectPasswordProfile,
   updatePassword,
   validateExistensPassword,
   selectUsersPlan,
-
   selectOldUsersFirstPart,
   selectOldUsersSecondtPart,
   selectNewUsers,
