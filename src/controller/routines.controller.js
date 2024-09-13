@@ -197,7 +197,7 @@ const selectTrainingPlan = async (req, res) => {
   try {
     const {id_entrenamiento, dias_entre} = req.body;
     const response = await pool.query(
-      "select id_ejercicios, nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_series,nombre_repeticion, posicion_ejer from repeticiones, series,plan_entrenamiento, entrenamiento, sub_categoria,ejercicios, categoria, categoria_sub, tipo_ejecucion where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and id_sub_cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and id_entrenamiento=$1 and dias_entre=$2 order by posicion_ejer ASC",
+      "select id_ejercicios, nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_series,nombre_repeticion, posicion_ejer from repeticiones, series,plan_entrenamiento, entrenamiento, sub_categoria,ejercicios, categoria, categoria_sub, tipo_ejecucion where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and id_sub_cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and categoria=id_sub_cat and id_entrenamiento=$1 and dias_entre=$2 order by posicion_ejer ASC",
       [id_entrenamiento, dias_entre]
     );
 
@@ -476,7 +476,7 @@ const searchOneTraining = async (req, res) => {
   try {
     const {id_ejercicios, dias_entre} = req.body;
     const response = await pool.query(
-      "select nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_repeticion, video, imagen, ejercicios.descripcion from repeticiones, series, plan_entrenamiento, entrenamiento, ejercicios, categoria, categoria_sub, sub_categoria, tipo_ejecucion where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and categoria=id_sub_cat id_sub_cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and id_ejercicios= $1 and dias_entre = $2 limit 1",
+      "select nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_repeticion, video, imagen, ejercicios.descripcion from repeticiones, series,plan_entrenamiento, entrenamiento, sub_categoria,ejercicios, categoria, categoria_sub, tipo_ejecucion where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and id_sub_cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and categoria=id_sub_cat and id_ejercicios= $1 and dias_entre = $2 limit 1",
       [id_ejercicios, dias_entre]
     );
 
