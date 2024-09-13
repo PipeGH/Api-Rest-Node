@@ -197,7 +197,7 @@ const selectTrainingPlan = async (req, res) => {
   try {
     const {id_entrenamiento, dias_entre} = req.body;
     const response = await pool.query(
-      "select id_ejercicios, nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_series,nombre_repeticion, posicion_ejer from repeticiones, series,plan_entrenamiento, entrenamiento, sub_categoria,ejercicios, categoria, categoria_sub, tipo_ejecucion where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and id_sub_Cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and categoria=id_sub_cat and id_entrenamiento=$1 and dias_entre=$2 order by posicion_ejer ASC",
+      "select id_ejercicios, nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_series,nombre_repeticion, posicion_ejer from repeticiones, series,plan_entrenamiento, entrenamiento, sub_categoria,ejercicios, categoria, categoria_sub, tipo_ejecucion where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and id_sub_cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and id_entrenamiento=$1 and dias_entre=$2 order by posicion_ejer ASC",
       [id_entrenamiento, dias_entre]
     );
 
@@ -440,7 +440,7 @@ const selectTrainingOfUser = async (req, res) => {
   try {
     const {documento, dias_entre} = req.body;
     const response = await pool.query(
-      "select id_ejercicio ,nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_series,nombre_repeticion, imagen from repeticiones, series,plan_entrenamiento, entrenamiento, sub_categoria,ejercicios, categoria, categoria_sub, tipo_ejecucion, usuarios, plan_entre_usuario where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and id_sub_Cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and categoria=id_sub_cat and id_plan_entre=id_entrenamiento and documento_entre=documento and documento = $1 and dias_entre= $2",
+      "select id_ejercicio, nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_series, nombre_repeticion, imagen from repeticiones, series, sub_categoria, categoria, categoria_sub, tipo_ejecucion, plan_entrenamiento, entrenamiento, ejercicios,usuarios, plan_entre_usuario where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and id_sub_cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and categoria=id_sub_cat and id_plan_entre=id_entrenamiento and documento_entre=documento and documento = $1 and dias_entre= $2",
       [documento, dias_entre]
     );
 
@@ -476,7 +476,7 @@ const searchOneTraining = async (req, res) => {
   try {
     const {id_ejercicios, dias_entre} = req.body;
     const response = await pool.query(
-      "select nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_repeticion, video, imagen, ejercicios.descripcion from repeticiones, series,plan_entrenamiento, entrenamiento, sub_categoria,ejercicios, categoria, categoria_sub, tipo_ejecucion where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and id_sub_Cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and categoria=id_sub_cat and id_ejercicios= $1 and dias_entre = $2 limit 1",
+      "select nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_repeticion, video, imagen, ejercicios.descripcion from repeticiones, series, plan_entrenamiento, entrenamiento, ejercicios, categoria, categoria_sub, sub_categoria, tipo_ejecucion where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and categoria=id_sub_cat id_sub_cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and id_ejercicios= $1 and dias_entre = $2 limit 1",
       [id_ejercicios, dias_entre]
     );
 
@@ -559,5 +559,3 @@ module.exports = {
 
   createPlanPersonalUser,
 };
-
-//SELECT id_plan_entrenamiento,nombres, primer_apellido, segundo_apellido, id_repeticiones, nombre_repeticion, id_series,numero_series, id_ejercicio, nombre_ejercicios, ejercicios.descripcion, imagen,nombre_categoria,nombre_sub, id_tipo_de_ejecucion, nombre_ejecucion, tipo_ejecucion.descripcion dias_entre, nombre_dias FROM entrenamiento, categoria, plan_entrenamiento, usuarios, repeticiones, series, ejercicios, categoria_sub, sub_categoria,tipo_ejecucion, dias, plan_entre_usuario where id_plan_entre=id_entrenamiento and documento_entre=documento and id_repes=id_repeticiones and id_serie=id_series and id_tipo_de_ejecucion=id_ejecucion and dias_entre= id_dias and id_categoria_cat=id_categoria and id_sub_cat=id_sub and categoria=id_sub and id_entrenamiento = '97147295'
