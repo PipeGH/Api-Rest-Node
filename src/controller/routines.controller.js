@@ -440,7 +440,33 @@ const selectTrainingOfUser = async (req, res) => {
   try {
     const {documento, dias_entre} = req.body;
     const response = await pool.query(
-      "select id_ejercicio, nombre_ejercicios, nombre_categoria, nombre_sub, nombre_ejecucion, numero_series,nombre_series, nombre_repeticion, imagen from repeticiones, series, sub_categoria, categoria, categoria_sub, tipo_ejecucion, plan_entrenamiento, entrenamiento, ejercicios,usuarios, plan_entre_usuario where id_plan_entrenamiento=id_entrenamiento and id_ejercicio=id_ejercicios and id_categoria_cat=id_categoria and id_sub_cat=id_sub and id_tipo_de_ejecucion=id_ejecucion and id_serie=id_series and id_repes=id_repeticiones and categoria=id_sub_cat and id_plan_entre=id_entrenamiento and documento_entre=documento and documento = $1 and dias_entre= $2",
+      `SELECT 
+    en.id_ejercicio,
+    e.nombre_ejercicios,
+    c.nombre_categoria,
+    sc.nombre_sub,
+    te.nombre_ejecucion,
+    s.numero_series,
+    s.nombre_series,
+    r.nombre_repeticion,
+    e.imagen
+FROM 
+    entrenamiento en
+JOIN plan_entrenamiento pe ON en.id_plan_entrenamiento = pe.id_entrenamiento
+JOIN ejercicios e ON en.id_ejercicio = e.id_ejercicios
+JOIN categoria_sub cs ON e.categoria = cs.id_sub_cat
+JOIN categoria c ON cs.id_categoria_cat = c.id_categoria   
+JOIN sub_categoria sc ON cs.id_sub_cat = sc.id_sub
+JOIN tipo_ejecucion te ON en.id_tipo_de_ejecucion = te.id_ejecucion
+JOIN series s ON pe.id_serie = s.id_series
+JOIN repeticiones r ON pe.id_repes = r.id_repeticiones
+JOIN plan_entre_usuario peu ON peu.id_plan_entre = pe.id_entrenamiento
+JOIN usuarios u ON peu.documento_entre = u.documento
+
+WHERE 
+    u.documento =$1 
+    AND 
+    en.dias_entre = $2`,
       [documento, dias_entre]
     );
 
@@ -453,7 +479,6 @@ const selectTrainingOfUser = async (req, res) => {
     res.status(401).json(error.details);
   }
 };
-
 const validatePlanUser = async (req, res) => {
   try {
     const {documento} = req.body;

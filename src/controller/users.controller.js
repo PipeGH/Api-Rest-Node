@@ -288,7 +288,7 @@ const selectUser = async (req, res) => {
 const selectTeam = async (req, res) => {
   try {
     const response = await pool.query(
-      `SELECT documento, nombres, primer_apellido, segundo_apellido, cargo, formacion, informacion, id_foto, foto_empleado FROM equipo_trabajo`
+      `SELECT documento, nombres, primer_apellido, segundo_apellido, cargo, formacion, informacion, id_foto,foto_empleado FROM equipo_trabajo`
     );
 
     res.json(response.rows);
@@ -561,7 +561,7 @@ const deleteImgEmp = async (req, res) => {
     res
       .status(200)
       .json(
-        "Imagen eliminada con éxito y foto_empleado actualizada a la imagen por defecto"
+        "Imagen eliminada con éxito y foto empleado actualizada a la imagen por defecto"
       );
   } catch (error) {
     res.status(500).json({
