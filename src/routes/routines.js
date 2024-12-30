@@ -23,6 +23,7 @@ const {
   asssingRoutine,
   createRoutinePersonal,
   selectTrainingOfUser,
+  selectTrainingDayUser,
   validatePlanUser,
   searchOneTraining,
   createPlanPersonalUser,
@@ -54,6 +55,8 @@ router.post("/asssingRoutine", asssingRoutine);
 router.post("/createRoutinePersonal", createRoutinePersonal);
 
 router.post("/selectTrainingOfUser", selectTrainingOfUser);
+router.post("/selectTrainingDayUser", selectTrainingDayUser);
+
 router.post("/validatePlanUser", validatePlanUser);
 router.post("/searchOneTraining", searchOneTraining);
 
