@@ -543,6 +543,7 @@ const searchOneTraining = async (req, res) => {
     s.nombre_series,
     r.nombre_repeticion,
     e.imagen,
+    e.video,
     e.descripcion 
 FROM 
     entrenamiento en
