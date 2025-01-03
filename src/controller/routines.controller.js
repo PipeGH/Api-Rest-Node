@@ -544,6 +544,7 @@ const searchOneTraining = async (req, res) => {
     r.nombre_repeticion,
     e.imagen,
     e.video,
+    
     e.descripcion 
 FROM 
     entrenamiento en
