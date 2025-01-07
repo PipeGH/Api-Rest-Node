@@ -158,16 +158,14 @@ const pool = new Pool({
 });
 
 //Metodos-------------------------
+// Instancia de Cryptr para encriptación (si la necesitas)
 const cryptr = new Cryptr("WmZq4t7w9z$C&FJ@NcRfUjXn2r5u8x/");
 
-var storage = multer.diskStorage({
-  filename: (req, file, callBack) => {
-    callBack(null, file.fileRaw + "-" + Date.now() + ".png");
-  },
-});
+var storage = multer.memoryStorage(); // Almacena el archivo en memoria
 
 var upload = multer({
-  storage: storage, //Definición de variables de encriptación---------------------------------------------->
+  storage: storage,
+  limits: {fileSize: 10 * 1024 * 1024}, // Limite de 10MB para el archivo
 });
 
 router.post("/createImgProfile", upload.single("file"), async (req, res) => {
@@ -238,32 +236,51 @@ router.post("/updateImgProfile", upload.single("file"), async (req, res) => {
 });
 router.post("/createImgEmployee", upload.single("file"), async (req, res) => {
   try {
-    const fs = require("fs");
-    var foto = fs.readFileSync(req.file.path);
-    const {id_foto, documento} = req.body;
+    if (!req.file) {
+      return res.status(400).json({message: "No file uploaded"});
+    }
 
-    // Log para verificar los valores de id_foto y documento
-    console.log("id_foto:", id_foto, "documento:", documento);
+    const {documento} = req.body;
 
+    // Verificamos que se haya enviado el documento
+    if (!documento) {
+      return res.status(400).json({message: "Missing documento"});
+    }
+
+    // Generamos un id_foto único (puedes usar un UUID o un valor random)
+    const id_foto = 123456;
+
+    console.log("Valor de id_foto generado:", id_foto);
+
+    // Leemos el archivo subido
+    const foto = fs.readFileSync(req.file.path);
+
+    // Realizamos la consulta para actualizar la foto del empleado
     const respuesta = await pool.query(
-      "UPDATE equipo_trabajo SET foto_empleado = $1 WHERE documento = $2",
-      [foto, documento]
+      "UPDATE equipo_trabajo SET foto_empleado = $1, id_foto = $2 WHERE documento = $3",
+      [foto, id_foto, documento]
     );
+
     // Log para ver la respuesta de la base de datos
     console.log("Respuesta de la base de datos:", respuesta);
 
-    if (respuesta.error) {
-      res.status(401).json(respuesta.error);
-    } else {
-      res.status(200).json("Imagen creada y empleado actualizado");
+    if (respuesta.rowCount === 0) {
+      // Si no se encontró ningún registro con el documento proporcionado
+      return res.status(404).json({message: "Empleado no encontrado"});
     }
+
+    // Eliminamos el archivo temporal después de que se haya procesado
+    fs.unlinkSync(req.file.path);
+
+    res
+      .status(200)
+      .json({message: "Imagen creada y empleado actualizado", id_foto});
   } catch (error) {
     // Log para ver el error si ocurre
     console.error("Error al procesar la solicitud:", error);
-    res.status(401).json(error);
+    res.status(500).json({message: "Error al procesar la solicitud", error});
   }
 });
-
 router.post("/updateEmpAndImage", upload.single("file"), async (req, res) => {
   try {
     const fs = require("fs");
