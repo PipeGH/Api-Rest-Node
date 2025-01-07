@@ -293,8 +293,6 @@ const selectTeam = async (req, res) => {
 
     res.json(response.rows);
 
-    res.json(response.rows);
-
     // Iterar sobre cada fila de los resultados
     response.rows.forEach((row) => {
       console.log(`ID Foto para el documento ${row.documento}: ${row.id_foto}`);
