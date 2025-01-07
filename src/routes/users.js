@@ -241,9 +241,7 @@ router.post("/createImgEmployee", upload.single("file"), async (req, res) => {
     const fs = require("fs");
     var foto = fs.readFileSync(req.file.path);
 
-    const id_foto = 1;
-
-    const {documento} = req.body;
+    const {id_foto, documento} = req.body;
     console.log("Valor de id_foto generado:", id_foto);
 
     const respuesta = await pool.query(
