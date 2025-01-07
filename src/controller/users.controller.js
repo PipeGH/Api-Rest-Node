@@ -542,12 +542,13 @@ const deleteImgEmp = async (req, res) => {
   try {
     const {documento} = req.body;
 
-    // Actualiza el campo foto_empleado en equipo_trabajo con la foto por defecto de la tabla foto
+    // Actualiza tanto el campo foto_empleado como el campo id_foto
     const response = await pool.query(
       `UPDATE equipo_trabajo 
        SET foto_empleado = (
          SELECT foto_personal FROM foto WHERE id_foto = 1
-       ) 
+       ),
+       id_foto = 1  
        WHERE documento = $1`,
       [documento]
     );
@@ -563,6 +564,9 @@ const deleteImgEmp = async (req, res) => {
       .json(
         "Imagen eliminada con éxito y foto empleado actualizada a la imagen por defecto"
       );
+    console.log(
+      "Imagen eliminada con éxito y foto empleado actualizada a la imagen por defecto"
+    );
   } catch (error) {
     res.status(500).json({
       error: "Ocurrió un error al eliminar la imagen",
@@ -570,6 +574,7 @@ const deleteImgEmp = async (req, res) => {
     });
   }
 };
+
 const deleteUser = async (req, res) => {
   console.log(req.body);
   try {

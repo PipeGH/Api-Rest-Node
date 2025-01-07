@@ -240,24 +240,42 @@ router.post("/createImgEmployee", upload.single("file"), async (req, res) => {
   try {
     const fs = require("fs");
 
-    var foto_empleado = fs.readFileSync(req.file.path);
+    // Log para ver la ruta del archivo recibido
+    console.log("Archivo recibido:", req.file);
+
+    var foto_emp = fs.readFileSync(req.file.path);
+
+    // Log para ver los datos recibidos en el cuerpo de la solicitud
+    console.log("Datos recibidos en el cuerpo:", req.body);
+
     const {id_foto, documento} = req.body;
 
+    // Log para verificar los valores de id_foto y documento
+    console.log("id_foto:", id_foto, "documento:", documento);
+
     const foto = id_foto;
+
+    // Ejecutar la consulta SQL
     const respuesta = await pool.query(
       "update equipo_trabajo set id_foto= $1, foto_empleado = $2 where documento =$3",
-      [foto, foto_empleado, documento]
+      [foto, foto_emp, documento]
     );
+
+    // Log para ver la respuesta de la base de datos
+    console.log("Respuesta de la base de datos:", respuesta);
 
     if (respuesta.error) {
       res.status(401).json(respuesta.error);
     } else {
-      res.status(200).json("Imagen creada y empleado  actualizado");
+      res.status(200).json("Imagen creada y empleado actualizado");
     }
   } catch (error) {
+    // Log para ver el error si ocurre
+    console.error("Error al procesar la solicitud:", error);
     res.status(401).json(error);
   }
 });
+
 router.post("/updateEmpAndImage", upload.single("file"), async (req, res) => {
   try {
     const fs = require("fs");
@@ -265,31 +283,33 @@ router.post("/updateEmpAndImage", upload.single("file"), async (req, res) => {
     const foto_empleado = fs.readFileSync(req.file.path);
     const {documento} = req.body;
 
-    // Obtener id_foto correspondiente al documento
+    // Obtener el id_foto correspondiente al documento
     const userResponse = await pool.query(
       "SELECT id_foto FROM equipo_trabajo WHERE documento = $1",
       [documento]
     );
-    console.log("mirame aqui perro setenta");
+
+    // Verificar si el empleado existe
     if (userResponse.rows.length === 0) {
       return res.status(404).json("Empleado no encontrado");
     }
 
-    const id_foto = userResponse.rows[0].id_foto;
-
-    // Actualizar la imagen en la tabla foto
+    // Actualizar solo la foto del empleado correspondiente al documento
     const response = await pool.query(
-      "UPDATE equipo_trabajo SET foto_empleado = $1 WHERE id_foto = $2",
-      [foto_empleado, id_foto]
+      "UPDATE equipo_trabajo SET foto_empleado = $1 WHERE documento = $2",
+      [foto_empleado, documento]
     );
 
-    if (response.error) {
-      res.status(401).json(response.error);
-      console.log("mirame aqui perro setenta 2");
-    } else {
-      res.status(200).json("Imagen actualizada con éxito");
+    // Verificar si la actualización fue exitosa
+    if (response.rowCount === 0) {
+      return res
+        .status(400)
+        .json("No se pudo actualizar la imagen del empleado");
     }
+
+    res.status(200).json("Imagen actualizada con éxito");
   } catch (error) {
+    console.error("Error al actualizar la imagen:", error);
     res.status(500).json("Error al actualizar la imagen");
   }
 });
