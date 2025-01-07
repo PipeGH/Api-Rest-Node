@@ -253,11 +253,9 @@ router.post("/createImgEmployee", upload.single("file"), async (req, res) => {
     // Log para verificar los valores de id_foto y documento
     console.log("id_foto:", id_foto, "documento:", documento);
 
-    const foto = id_foto;
-
     const respuesta = await pool.query(
       "UPDATE equipo_trabajo SET foto_empleado = $1 WHERE documento = $2",
-      [foto, documento]
+      [foto_emp, documento]
     );
     // Log para ver la respuesta de la base de datos
     console.log("Respuesta de la base de datos:", respuesta);
