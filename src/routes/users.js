@@ -239,15 +239,7 @@ router.post("/updateImgProfile", upload.single("file"), async (req, res) => {
 router.post("/createImgEmployee", upload.single("file"), async (req, res) => {
   try {
     const fs = require("fs");
-
-    // Log para ver la ruta del archivo recibido
-    console.log("Archivo recibido:", req.file);
-
-    var foto_emp = fs.readFileSync(req.file.path);
-
-    // Log para ver los datos recibidos en el cuerpo de la solicitud
-    console.log("Datos recibidos en el cuerpo:", req.body);
-
+    var foto = fs.readFileSync(req.file.path);
     const {id_foto, documento} = req.body;
 
     // Log para verificar los valores de id_foto y documento
@@ -255,7 +247,7 @@ router.post("/createImgEmployee", upload.single("file"), async (req, res) => {
 
     const respuesta = await pool.query(
       "UPDATE equipo_trabajo SET foto_empleado = $1 WHERE documento = $2",
-      [foto_emp, documento]
+      [foto, documento]
     );
     // Log para ver la respuesta de la base de datos
     console.log("Respuesta de la base de datos:", respuesta);
