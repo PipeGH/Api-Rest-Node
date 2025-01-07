@@ -255,12 +255,10 @@ router.post("/createImgEmployee", upload.single("file"), async (req, res) => {
 
     const foto = id_foto;
 
-    // Ejecutar la consulta SQL
     const respuesta = await pool.query(
-      "update equipo_trabajo set id_foto= $1, foto_empleado = $2 where documento =$3",
-      [foto, foto_emp, documento]
+      "UPDATE equipo_trabajo SET foto_empleado = $1 WHERE documento = $2",
+      [foto, documento]
     );
-
     // Log para ver la respuesta de la base de datos
     console.log("Respuesta de la base de datos:", respuesta);
 
