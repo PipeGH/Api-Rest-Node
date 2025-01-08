@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 //Definición de las variables exportadas por el controlador---------------------->
@@ -147,6 +148,8 @@ router.post("/searchOnePersonalTitle", searchOnePersonalTitle);
 const {Pool} = require("pg");
 const multer = require("multer");
 const Cryptr = require("cryptr");
+const sharp = require("sharp");
+const fs = require("fs");
 //Conexión con la base de datos
 
 const pool = new Pool({
@@ -162,18 +165,18 @@ const cryptr = new Cryptr("WmZq4t7w9z$C&FJ@NcRfUjXn2r5u8x/");
 
 var storage = multer.diskStorage({
   filename: (req, file, callBack) => {
-    callBack(null, file.fileRaw + "-" + Date.now() + ".png");
+    const fileExtension = file.mimetype.split("/")[1]; // Ejemplo: 'jpeg', 'png', 'webp'
+    callBack(null, Date.now() + "." + fileExtension);
   },
 });
 
-var upload = multer({
-  storage: storage, //Definición de variables de encriptación---------------------------------------------->
+const upload = multer({
+  storage: storage,
+  limits: {fileSize: 5 * 1024 * 1024}, // 5MB máximo
 });
 
 router.post("/createImgProfile", upload.single("file"), async (req, res) => {
   try {
-    const fs = require("fs");
-
     var foto_personal = fs.readFileSync(req.file.path);
     const {id_foto, documento} = req.body;
 
@@ -204,8 +207,6 @@ router.post("/createImgProfile", upload.single("file"), async (req, res) => {
 
 router.post("/updateImgProfile", upload.single("file"), async (req, res) => {
   try {
-    const fs = require("fs");
-
     const foto_personal = fs.readFileSync(req.file.path);
     const {documento} = req.body;
 
@@ -238,8 +239,15 @@ router.post("/updateImgProfile", upload.single("file"), async (req, res) => {
 });
 router.post("/createImgEmployee", upload.single("file"), async (req, res) => {
   try {
-    const fs = require("fs");
-    var foto = fs.readFileSync(req.file.path);
+    const filePath = req.file.path;
+
+    const outputFilePath = filePath.replace(/\.[^/.]+$/, ".webp"); // Reemplazar a .webp
+
+    await sharp(filePath).webp({quality: 80}).toFile(outputFilePath);
+
+    fs.unlinkSync(filePath);
+
+    var foto = fs.readFileSync(outputFilePath);
 
     const {id_foto, documento} = req.body;
     console.log("Valor de id_foto generado:", id_foto);
@@ -266,10 +274,20 @@ router.post("/createImgEmployee", upload.single("file"), async (req, res) => {
 
 router.post("/updateEmpAndImage", upload.single("file"), async (req, res) => {
   try {
-    const fs = require("fs");
+    // Verificar si se subió una imagen
+    if (!req.file) {
+      return res.status(400).json("No se ha subido ningún archivo.");
+    }
 
-    const foto_empleado = fs.readFileSync(req.file.path);
     const {documento} = req.body;
+
+    // Procesar la imagen y convertirla a formato webp usando sharp
+    const webpBuffer = await sharp(req.file.path)
+      .webp() // Convertir a formato webp
+      .toBuffer();
+
+    // Eliminar el archivo temporal una vez procesado
+    fs.unlinkSync(req.file.path);
 
     // Obtener el id_foto correspondiente al documento
     const userResponse = await pool.query(
@@ -282,10 +300,10 @@ router.post("/updateEmpAndImage", upload.single("file"), async (req, res) => {
       return res.status(404).json("Empleado no encontrado");
     }
 
-    // Actualizar solo la foto del empleado correspondiente al documento
+    // Actualizar la imagen en la base de datos
     const response = await pool.query(
       "UPDATE equipo_trabajo SET foto_empleado = $1 WHERE documento = $2",
-      [foto_empleado, documento]
+      [webpBuffer, documento]
     );
 
     // Verificar si la actualización fue exitosa
@@ -295,6 +313,7 @@ router.post("/updateEmpAndImage", upload.single("file"), async (req, res) => {
         .json("No se pudo actualizar la imagen del empleado");
     }
 
+    // Responder con éxito
     res.status(200).json("Imagen actualizada con éxito");
   } catch (error) {
     console.error("Error al actualizar la imagen:", error);
