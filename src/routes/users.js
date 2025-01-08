@@ -246,6 +246,7 @@ router.post("/createImgEmployee", upload.single("file"), async (req, res) => {
     await sharp(filePath).webp({quality: 80}).toFile(outputFilePath);
 
     fs.unlinkSync(filePath);
+    console.log("Archivo WebP generado en:", outputFilePath);
 
     var foto = fs.readFileSync(outputFilePath);
 
@@ -281,13 +282,23 @@ router.post("/updateEmpAndImage", upload.single("file"), async (req, res) => {
 
     const {documento} = req.body;
 
-    // Procesar la imagen y convertirla a formato webp usando sharp
-    const webpBuffer = await sharp(req.file.path)
-      .webp() // Convertir a formato webp
-      .toBuffer();
+    // onvertir img a formato webp
+    let webpBuffer;
 
-    // Eliminar el archivo temporal una vez procesado
-    fs.unlinkSync(req.file.path);
+    if (req.file.mimetype === "image/webp") {
+      // Si la imagen ya es WebP, simplemente leemos el buffer
+      webpBuffer = fs.readFileSync(req.file.path);
+    } else {
+      // Si no es WebP, la convertimos
+      webpBuffer = await sharp(req.file.path).webp().toBuffer();
+    }
+    console.log(
+      "Tamaño de la imagen convertida a WebP:",
+      webpBuffer.length,
+      "bytes"
+    );
+
+    await fs.promises.unlink(req.file.path);
 
     // Obtener el id_foto correspondiente al documento
     const userResponse = await pool.query(
