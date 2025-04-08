@@ -1092,7 +1092,7 @@ const createNewUser = async (req, res) => {
 
     await pool.query(
       "INSERT INTO plan_entre_usuario (id_plan_entre, documento_entre) VALUES ($1, $2)",
-      [68642480, documento]
+      [91282606, documento]
     );
 
     await counterController.incrementCounter();
