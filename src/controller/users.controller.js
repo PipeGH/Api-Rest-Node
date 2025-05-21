@@ -1061,7 +1061,7 @@ const createNewUser = async (req, res) => {
     const rol = 5;
     const password = cryptr.encrypt(documento);
 
-    // Verificar si el documento ya existe
+    // Verificar si ya existe
     const existingUser = await pool.query(
       "SELECT 1 FROM usuarios WHERE documento = $1",
       [documento]
@@ -1073,7 +1073,7 @@ const createNewUser = async (req, res) => {
         .json("El documento que ingresó ya se encuentra registrado");
     }
 
-    // Insertar en la tabla usuarios
+    // Insertar en usuarios
     await pool.query(
       "INSERT INTO usuarios (documento, correo, password, nombres, primer_apellido, segundo_apellido, rol, tipo_de_documento, estado, genero, img, fecha_nacimiento) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)",
       [
@@ -1108,42 +1108,52 @@ const createNewUser = async (req, res) => {
       [id_valoracion_tipo, documento]
     );
 
+    // 👉 Manejo de plan según género
+    console.log("Género recibido:", genero);
+    console.log("Documento recibido:", documento);
+
+    const generoNum = parseInt(genero);
+
     let idPlan;
 
-    if (genero === 1) {
+    if (generoNum === 1) {
       idPlan = 34047679;
-    } else if (genero === 2) {
+    } else if (generoNum === 2) {
       idPlan = 11783246;
     } else {
-      // Puedes manejar un caso por defecto si el género no es válido
+      console.error("❌ Género no válido:", generoNum);
       return res.status(400).json({error: "Género no válido"});
     }
 
-    // Ejecutar la consulta
+    console.log("✅ ID del plan asignado:", idPlan);
+
     await pool.query(
       "INSERT INTO plan_entre_usuario (id_plan_entre, documento_entre) VALUES ($1, $2)",
       [idPlan, documento]
     );
 
-    res.status(200).json({message: "Plan asignado correctamente"});
+    console.log("✅ Plan insertado correctamente");
 
+    // Contador
     await counterController.incrementCounter();
-
     await counterController.recalculateCurrentWeekCount();
     const currentWeekCount = await counterController.getCurrentWeekCount();
     console.log(
-      `Usuario registrado. Contador semanal actual: ${currentWeekCount}`
+      `🧮 Usuario registrado. Contador semanal actual: ${currentWeekCount}`
     );
 
-    res.status(200).json("Nuevo usuario creado con éxito");
+    // ✅ SOLO AQUÍ debes enviar la respuesta
+    return res.status(200).json("Nuevo usuario creado con éxito");
   } catch (error) {
-    console.error("Error al registrar el usuario:", error);
+    console.error("❌ Error al registrar el usuario:", error);
     if (error.constraint === "usuarios_documento_key") {
-      res
+      return res
         .status(400)
         .json("El documento que ingresó ya se encuentra registrado");
     } else {
-      res.status(500).json("Error al registrar el usuario, intente nuevamente");
+      return res
+        .status(500)
+        .json("Error al registrar el usuario, intente nuevamente");
     }
   }
 };
