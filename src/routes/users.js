@@ -11,6 +11,7 @@ const {
   selectGender,
   selectUser,
   selectTeam,
+  selectAllTeam,
   selectEmployee,
   selectOneEmpl,
   createUsers,
@@ -66,6 +67,7 @@ const {
 //Definición de las rutas-------------------------------------------------------->
 router.post("/selectUsers", selectUsers);
 router.post("/selectTeam", selectTeam);
+router.post("/selectAllTeam", selectAllTeam);
 router.post("/selectEmployee", selectEmployee);
 router.get("/selectDocument", selectDocument);
 router.get("/selectRol", selectRol);
@@ -246,7 +248,7 @@ router.post("/createImgEmployee", upload.single("file"), async (req, res) => {
     await sharp(filePath).webp({quality: 80}).toFile(outputFilePath);
 
     fs.unlinkSync(filePath);
-    console.log("Archivo WebP generado en:", outputFilePath);
+    console.log("Archivo Webp generado en:", outputFilePath);
 
     var foto = fs.readFileSync(outputFilePath);
 
@@ -282,7 +284,7 @@ router.post("/updateEmpAndImage", upload.single("file"), async (req, res) => {
 
     const {documento} = req.body;
 
-    // onvertir img a formato webp
+    // convertir img a formato webp
     let webpBuffer;
 
     if (req.file.mimetype === "image/webp") {

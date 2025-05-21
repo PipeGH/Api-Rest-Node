@@ -286,18 +286,37 @@ const selectUser = async (req, res) => {
   }
 };
 const selectTeam = async (req, res) => {
+  const {cargo} = req.body;
+
+  console.log("Role recibido en el backend:", cargo);
+
   try {
     const response = await pool.query(
-      `SELECT documento, nombres, primer_apellido, segundo_apellido, cargo, formacion, informacion, id_foto,foto_empleado FROM equipo_trabajo`
+      `SELECT documento, nombres, primer_apellido, cargo, formacion, id_foto, foto_empleado 
+      FROM equipo_trabajo WHERE cargo = $1`,
+      [cargo]
     );
 
     res.json(response.rows);
-    console.log(response.rows);
-    console.log("este es el documento del pelao");
   } catch (error) {
-    res.status(401).json("Error en el servidor, intentelo más tarde");
+    console.error(error);
+    res.status(500).json("Error en el servidor, intentelo más tarde");
   }
 };
+// Obtener todos los empleados
+const selectAllTeam = async (req, res) => {
+  try {
+    const response = await pool.query(
+      `SELECT documento, nombres, primer_apellido, segundo_apellido, cargo, formacion, informacion, id_foto, foto_empleado 
+      FROM equipo_trabajo`
+    );
+    res.json(response.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json("Error en el servidor, intentelo más tarde");
+  }
+};
+
 const selectEmployee = async (req, res) => {
   const {documento} = req.body;
 
@@ -307,7 +326,6 @@ const selectEmployee = async (req, res) => {
       [documento]
     );
     res.json(response.rows);
-    console.log("Mirame aqui grannnnnn hhhhhhh");
   } catch (error) {
     res.status(401).json("Error en el servidor, intentelo más tarde");
   }
@@ -1090,10 +1108,24 @@ const createNewUser = async (req, res) => {
       [id_valoracion_tipo, documento]
     );
 
+    let idPlan;
+
+    if (genero === "Masculino") {
+      idPlan = 11783246;
+    } else if (genero === "Femenino") {
+      idPlan = 34047679;
+    } else {
+      // Puedes manejar un caso por defecto si el género no es válido
+      return res.status(400).json({error: "Género no válido"});
+    }
+
+    // Ejecutar la consulta
     await pool.query(
       "INSERT INTO plan_entre_usuario (id_plan_entre, documento_entre) VALUES ($1, $2)",
-      [91282606, documento]
+      [idPlan, documento]
     );
+
+    res.status(200).json({message: "Plan asignado correctamente"});
 
     await counterController.incrementCounter();
 
@@ -1417,6 +1449,7 @@ module.exports = {
   updateEmployees,
   selectUser,
   selectTeam,
+  selectAllTeam,
   selectEmployee,
   selectOneEmpl,
   updateState,
