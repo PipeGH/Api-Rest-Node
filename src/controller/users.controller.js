@@ -1110,10 +1110,10 @@ const createNewUser = async (req, res) => {
 
     let idPlan;
 
-    if (genero === "Masculino") {
-      idPlan = 11783246;
-    } else if (genero === "Femenino") {
+    if (genero === 1) {
       idPlan = 34047679;
+    } else if (genero === 2) {
+      idPlan = 11783246;
     } else {
       // Puedes manejar un caso por defecto si el género no es válido
       return res.status(400).json({error: "Género no válido"});
