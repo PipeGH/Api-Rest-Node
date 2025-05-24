@@ -589,11 +589,11 @@ const deleteImgEmp = async (req, res) => {
   }
 };
 const deleteUser = async (req, res) => {
-  console.log(req.body);
+  const {documento} = req.params;
+  console.log("Documento recibido:", documento);
+
   try {
-    const {documento} = req.params;
-    console.log("Documento recibido:", documento);
-    await pool.query("BEGIN"); // Inicia la transacción
+    await pool.query("BEGIN"); // Inicia transacción
 
     const deleteQuery = `
       WITH deleted_pagos AS (
@@ -608,23 +608,38 @@ const deleteUser = async (req, res) => {
       deleted_tipos AS (
         DELETE FROM tipo_usuario WHERE documento_tipo = $1
       ),
-      deleted_valoracion_basic AS (
+      deleted_valoracion_ba AS (
         DELETE FROM valoracion_basica WHERE documento_valoracion = $1
       ),
-       deleted_valoracion_av AS (
+      deleted_valoracion_av AS (
         DELETE FROM valoracion_avanzada WHERE documento_valoracion = $1
       ),
+      
       deleted_plan_nutricional AS (
         DELETE FROM plan_nutricional_usuarios WHERE documento_plan = $1
       ),
-        deleted_educacion AS (
+      deleted_educacion AS (
         DELETE FROM educacion_usuarios WHERE documento_usuarios_titulo = $1
+      ),
+      deleted_encuesta AS (
+        DELETE FROM encuesta WHERE documento_en = $1
       )
       DELETE FROM usuarios WHERE documento = $1;
     `;
+
+    await pool.query(deleteQuery, [documento]);
+    await pool.query("COMMIT");
+    res.status(200).json({message: "Usuario eliminado con éxito"});
   } catch (error) {
-    await pool.query("ROLLBACK"); // Revierte la transacción en caso de error
-    res.status(401).json(error.details);
+    await pool.query("ROLLBACK"); // Revierte si algo falla
+
+    console.error("Error al eliminar usuario:", error); // Muestra el error real en consola
+
+    // Devuelve el mensaje correctamente al frontend
+    res.status(500).json({
+      mensaje: "Error al eliminar usuario",
+      error: error.message || error,
+    });
   }
 };
 
@@ -1108,7 +1123,7 @@ const createNewUser = async (req, res) => {
       [id_valoracion_tipo, documento]
     );
 
-    // 👉 Manejo de plan según género
+    //Manejo de plan según género
     console.log("Género recibido:", genero);
     console.log("Documento recibido:", documento);
 
@@ -1121,31 +1136,30 @@ const createNewUser = async (req, res) => {
     } else if (generoNum === 2) {
       idPlan = 11783246;
     } else {
-      console.error("❌ Género no válido:", generoNum);
+      console.error("Género no válido:", generoNum);
       return res.status(400).json({error: "Género no válido"});
     }
 
-    console.log("✅ ID del plan asignado:", idPlan);
+    console.log("ID del plan asignado:", idPlan);
 
     await pool.query(
       "INSERT INTO plan_entre_usuario (id_plan_entre, documento_entre) VALUES ($1, $2)",
       [idPlan, documento]
     );
 
-    console.log("✅ Plan insertado correctamente");
+    console.log("Plan insertado correctamente");
 
     // Contador
     await counterController.incrementCounter();
     await counterController.recalculateCurrentWeekCount();
     const currentWeekCount = await counterController.getCurrentWeekCount();
     console.log(
-      `🧮 Usuario registrado. Contador semanal actual: ${currentWeekCount}`
+      `Usuario registrado. Contador semanal actual: ${currentWeekCount}`
     );
 
-    // ✅ SOLO AQUÍ debes enviar la respuesta
     return res.status(200).json("Nuevo usuario creado con éxito");
   } catch (error) {
-    console.error("❌ Error al registrar el usuario:", error);
+    console.error("Error al registrar el usuario:", error);
     if (error.constraint === "usuarios_documento_key") {
       return res
         .status(400)
@@ -1173,6 +1187,7 @@ const searchPerfilUser = async (req, res) => {
     }
   } catch (error) {
     res.status(401).json(error.details);
+    console.error("Error al registrar el usuario:", error);
   }
 };
 
