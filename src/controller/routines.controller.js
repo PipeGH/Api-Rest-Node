@@ -358,18 +358,29 @@ const updateNameRoutine = async (req, res) => {
 const cleanTraining = async (req, res) => {
   try {
     const {id_plan_entrenamiento} = req.body;
-    const response = await pool.query(
-      "delete from entrenamiento where id_plan_entrenamiento = $1",
+
+    // Eliminar primero de entrenamiento (donde hay FK)
+    await pool.query(
+      "DELETE FROM entrenamiento WHERE id_plan_entrenamiento = $1",
       [id_plan_entrenamiento]
     );
 
-    if (response.error) {
-      res.status(401).json(response.error);
-    } else {
-      res.status(200).json("Ejercicios eliminados");
-    }
+    // Luego de plan_entre_usuario (donde está la relación con el usuario)
+    await pool.query(
+      "DELETE FROM plan_entre_usuario WHERE id_plan_entre = $1",
+      [id_plan_entrenamiento]
+    );
+
+    // Por último eliminar el plan
+    await pool.query(
+      "DELETE FROM plan_entrenamiento WHERE id_entrenamiento = $1",
+      [id_plan_entrenamiento]
+    );
+
+    res.status(200).json("Plan eliminado correctamente");
   } catch (error) {
-    res.status(401).json(error.details);
+    console.error("❌ Error al eliminar el plan:", error);
+    res.status(500).json("Error al eliminar el plan de entrenamiento");
   }
 };
 
